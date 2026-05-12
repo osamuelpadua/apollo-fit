@@ -1,25 +1,39 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { UserPlus } from "lucide-react"
+import { UserPlus, Users } from "lucide-react"
+import { Suspense } from "react"
 import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/shared/page-header"
 import { EmptyState } from "@/components/shared/empty-state"
-import { getStudents } from "@/features/students/queries"
-import { Users } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { StudentSearch } from "@/components/students/student-search"
+import { getStudents } from "@/features/students/queries"
 import { getInitials } from "@/lib/utils"
 
 export const metadata: Metadata = { title: "Alunos" }
 
-export default async function StudentsPage() {
-  const students = await getStudents()
+interface Props {
+  searchParams: Promise<{ q?: string; status?: string }>
+}
+
+export default async function StudentsPage({ searchParams }: Props) {
+  const { q, status } = await searchParams
+
+  const students = await getStudents({
+    search: q,
+    active: status === "active" ? true : status === "inactive" ? false : undefined,
+  })
+
+  const totalAll = await getStudents()
+  const totalActive = totalAll.filter((s) => s.is_active).length
+  const totalInactive = totalAll.filter((s) => !s.is_active).length
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="Alunos"
-        description={`${students.length} aluno${students.length !== 1 ? "s" : ""} cadastrado${students.length !== 1 ? "s" : ""}`}
+        description={`${students.length} resultado${students.length !== 1 ? "s" : ""}`}
       >
         <Button
           render={<Link href="/students/new" />}
@@ -30,19 +44,63 @@ export default async function StudentsPage() {
         </Button>
       </PageHeader>
 
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+        <Suspense>
+          <StudentSearch defaultValue={q} />
+        </Suspense>
+
+        <div className="flex gap-1.5 text-sm">
+          {[
+            { label: "Todos", value: undefined, count: totalAll.length },
+            { label: "Ativos", value: "active", count: totalActive },
+            { label: "Inativos", value: "inactive", count: totalInactive },
+          ].map(({ label, value, count }) => {
+            const isSelected = status === value || (!status && !value)
+            const href = value ? `/students?status=${value}${q ? `&q=${q}` : ""}` : `/students${q ? `?q=${q}` : ""}`
+            return (
+              <Link
+                key={label}
+                href={href}
+                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                  isSelected
+                    ? "bg-primary/10 text-primary border border-primary/20"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent border border-transparent"
+                }`}
+              >
+                {label}
+                <span
+                  className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
+                    isSelected ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {count}
+                </span>
+              </Link>
+            )
+          })}
+        </div>
+      </div>
+
       {students.length === 0 ? (
         <EmptyState
           icon={Users}
-          title="Nenhum aluno cadastrado"
-          description="Cadastre seu primeiro aluno para começar a gerenciar treinos."
+          title={q ? "Nenhum aluno encontrado" : "Nenhum aluno cadastrado"}
+          description={
+            q
+              ? `Nenhum resultado para "${q}". Tente outro nome.`
+              : "Cadastre seu primeiro aluno para começar a gerenciar treinos."
+          }
         >
-          <Button
-            render={<Link href="/students/new" />}
-            className="bg-primary hover:bg-[var(--primary-hover)] text-primary-foreground"
-          >
-            <UserPlus className="size-4" />
-            Cadastrar Aluno
-          </Button>
+          {!q && (
+            <Button
+              render={<Link href="/students/new" />}
+              className="bg-primary hover:bg-[var(--primary-hover)] text-primary-foreground"
+            >
+              <UserPlus className="size-4" />
+              Cadastrar Aluno
+            </Button>
+          )}
         </EmptyState>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

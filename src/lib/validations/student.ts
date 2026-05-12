@@ -8,7 +8,7 @@ export const studentSchema = z.object({
   gender: z.enum(["male", "female", "other"]).optional(),
   goal: z.string().max(500).optional().or(z.literal("")),
   notes: z.string().max(2000).optional().or(z.literal("")),
-  is_active: z.boolean().default(true),
+  is_active: z.boolean(),
 })
 
 export type StudentFormData = z.infer<typeof studentSchema>

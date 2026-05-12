@@ -1,11 +1,12 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Dumbbell, ClipboardList, Paperclip } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { PageHeader } from "@/components/shared/page-header"
+import { StudentActions } from "@/components/students/student-actions"
 import { getStudentById } from "@/features/students/queries"
 import { getInitials, calculateAge, formatDate } from "@/lib/utils"
 
@@ -33,13 +34,29 @@ export default async function StudentDetailPage({ params }: Props) {
     notFound()
   }
 
+  const genderLabel =
+    student.gender === "male"
+      ? "Masculino"
+      : student.gender === "female"
+        ? "Feminino"
+        : student.gender === "other"
+          ? "Outro"
+          : null
+
   return (
     <div className="space-y-6">
-      <PageHeader title={student.full_name} description="Detalhes do aluno">
-        <Button render={<Link href="/students" />} variant="ghost" size="sm">
-          <ArrowLeft className="size-4" />
-          Voltar
-        </Button>
+      <PageHeader title={student.full_name} description="Perfil do aluno">
+        <div className="flex items-center gap-2">
+          <Button render={<Link href="/students" />} variant="ghost" size="sm">
+            <ArrowLeft className="size-4" />
+            Alunos
+          </Button>
+          <StudentActions
+            studentId={id}
+            studentName={student.full_name}
+            isActive={student.is_active}
+          />
+        </div>
       </PageHeader>
 
       {/* Profile card */}
@@ -51,6 +68,7 @@ export default async function StudentDetailPage({ params }: Props) {
               {getInitials(student.full_name)}
             </AvatarFallback>
           </Avatar>
+
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 flex-wrap">
               <h2 className="text-xl font-bold text-foreground">{student.full_name}</h2>
@@ -65,6 +83,7 @@ export default async function StudentDetailPage({ params }: Props) {
                 {student.is_active ? "Ativo" : "Inativo"}
               </Badge>
             </div>
+
             {student.email && (
               <p className="mt-1 text-sm text-muted-foreground">{student.email}</p>
             )}
@@ -76,30 +95,26 @@ export default async function StudentDetailPage({ params }: Props) {
               {student.date_of_birth && (
                 <div>
                   <p className="text-xs text-muted-foreground">Idade</p>
-                  <p className="text-sm font-semibold text-foreground">
+                  <p className="text-sm font-semibold">
                     {calculateAge(student.date_of_birth)} anos
                   </p>
                 </div>
               )}
               {student.phone && (
                 <div>
-                  <p className="text-xs text-muted-foreground">WhatsApp</p>
-                  <p className="text-sm font-semibold text-foreground">{student.phone}</p>
+                  <p className="text-xs text-muted-foreground">Telefone</p>
+                  <p className="text-sm font-semibold">{student.phone}</p>
                 </div>
               )}
-              {student.gender && (
+              {genderLabel && (
                 <div>
-                  <p className="text-xs text-muted-foreground">Sexo</p>
-                  <p className="text-sm font-semibold text-foreground">
-                    {student.gender === "male" ? "Masculino" : student.gender === "female" ? "Feminino" : "Outro"}
-                  </p>
+                  <p className="text-xs text-muted-foreground">Gênero</p>
+                  <p className="text-sm font-semibold">{genderLabel}</p>
                 </div>
               )}
               <div>
                 <p className="text-xs text-muted-foreground">Cadastro</p>
-                <p className="text-sm font-semibold text-foreground">
-                  {formatDate(student.created_at)}
-                </p>
+                <p className="text-sm font-semibold">{formatDate(student.created_at)}</p>
               </div>
             </div>
           </div>
@@ -109,15 +124,49 @@ export default async function StudentDetailPage({ params }: Props) {
       {/* Notes */}
       {student.notes && (
         <div className="rounded-xl border border-border bg-card p-5">
-          <h3 className="text-sm font-semibold text-foreground mb-2">Observações</h3>
-          <p className="text-sm text-muted-foreground whitespace-pre-wrap">{student.notes}</p>
+          <h3 className="text-sm font-semibold text-foreground mb-3">Observações</h3>
+          <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
+            {student.notes}
+          </p>
         </div>
       )}
 
-      <div className="rounded-xl border border-border bg-card p-6">
-        <p className="text-sm text-muted-foreground text-center py-4">
-          Treinos, avaliações e arquivos do aluno — implementados nas Fases 2-6.
-        </p>
+      {/* Quick links */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {[
+          {
+            icon: Dumbbell,
+            label: "Treinos",
+            desc: "Ver e gerenciar treinos",
+            href: `/students/${id}/workouts`,
+          },
+          {
+            icon: ClipboardList,
+            label: "Avaliações",
+            desc: "Histórico de avaliações",
+            href: `/students/${id}/assessments`,
+          },
+          {
+            icon: Paperclip,
+            label: "Arquivos",
+            desc: "Exames e documentos",
+            href: `/students/${id}/files`,
+          },
+        ].map(({ icon: Icon, label, desc, href }) => (
+          <Link
+            key={label}
+            href={href}
+            className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 hover:border-primary/30 hover:bg-primary/5 transition-all group"
+          >
+            <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+              <Icon className="size-4 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-foreground">{label}</p>
+              <p className="text-xs text-muted-foreground">{desc}</p>
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   )
