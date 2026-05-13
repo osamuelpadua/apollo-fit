@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import { Plus, Loader2, Pencil } from "lucide-react"
+import { Plus, Loader2 } from "lucide-react"
 import {
   Dialog,
   DialogContent,

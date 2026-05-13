@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useTransition, type ReactElement } from "react"
+import { useState, useTransition, type ReactElement } from "react"
 import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
@@ -38,18 +38,23 @@ export function ApplyTemplateDialog({ templateId, templateName, trigger }: Props
   const [workoutName, setWorkoutName] = useState(templateName)
   const [isPending, startTransition] = useTransition()
 
-  useEffect(() => {
-    if (open && students.length === 0) {
-      setLoadingStudents(true)
-      getStudentsForSelect()
-        .then(setStudents)
-        .catch(() => setStudents([]))
-        .finally(() => setLoadingStudents(false))
+  async function loadStudents() {
+    setLoadingStudents(true)
+    try {
+      const nextStudents = await getStudentsForSelect()
+      setStudents(nextStudents)
+    } catch {
+      setStudents([])
+    } finally {
+      setLoadingStudents(false)
     }
-  }, [open, students.length])
+  }
 
   function handleOpen(v: boolean) {
     setOpen(v)
+    if (v && students.length === 0) {
+      void loadStudents()
+    }
     if (!v) {
       setStudentId("")
       setWorkoutName(templateName)

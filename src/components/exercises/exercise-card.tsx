@@ -135,7 +135,7 @@ export function ExerciseCard({ exercise, isOwn }: Props) {
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent className="bg-card border-border">
           <AlertDialogHeader>
-            <AlertDialogTitle>Excluir "{exercise.name}"?</AlertDialogTitle>
+            <AlertDialogTitle>Excluir {exercise.name}?</AlertDialogTitle>
             <AlertDialogDescription>
               Este exercício será removido da sua biblioteca. Treinos que já o
               utilizam não serão afetados.

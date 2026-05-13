@@ -198,7 +198,7 @@ export function StudentFiles({ files, studentId }: Props) {
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir arquivo?</AlertDialogTitle>
             <AlertDialogDescription>
-              "{deleteTarget?.file_name}" será removido permanentemente.
+              O arquivo {deleteTarget?.file_name} será removido permanentemente.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

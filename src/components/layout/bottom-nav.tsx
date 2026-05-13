@@ -1,7 +1,8 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import {
   LayoutDashboard,
   Users,
@@ -21,6 +22,17 @@ const NAV_ITEMS = [
 
 export function BottomNav() {
   const pathname = usePathname()
+  const router = useRouter()
+  const [pendingHref, setPendingHref] = useState<string | null>(null)
+
+  useEffect(() => {
+    NAV_ITEMS.forEach(({ href }) => {
+      void router.prefetch(href)
+    })
+  }, [router])
+
+  const activePath =
+    pendingHref && pathname !== pendingHref ? pendingHref : pathname
 
   return (
     <nav
@@ -31,13 +43,15 @@ export function BottomNav() {
         {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
           const active =
             href === "/dashboard"
-              ? pathname === "/dashboard"
-              : pathname.startsWith(href)
+              ? activePath === "/dashboard"
+              : activePath.startsWith(href)
 
           return (
             <Link
               key={href}
               href={href}
+              prefetch
+              onClick={() => setPendingHref(href)}
               className={cn(
                 "relative flex flex-1 flex-col items-center justify-center gap-1 transition-colors duration-150",
                 active ? "text-primary" : "text-muted-foreground"

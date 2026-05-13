@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
+import { useState, useMemo } from "react"
 import { Search, Plus, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import {
@@ -27,14 +27,22 @@ export function ExercisePickerDialog({ sectionId, onAdd }: Props) {
   const [muscle, setMuscle] = useState<MuscleGroup | "">("")
   const [adding, setAdding] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (open && exercises.length === 0) {
-      setLoading(true)
-      getExercises()
-        .then(setExercises)
-        .finally(() => setLoading(false))
+  async function loadExercises() {
+    setLoading(true)
+    try {
+      const nextExercises = await getExercises()
+      setExercises(nextExercises)
+    } finally {
+      setLoading(false)
     }
-  }, [open, exercises.length])
+  }
+
+  function handleOpen(nextOpen: boolean) {
+    setOpen(nextOpen)
+    if (nextOpen && exercises.length === 0) {
+      void loadExercises()
+    }
+  }
 
   const filtered = useMemo(
     () =>
@@ -89,7 +97,7 @@ export function ExercisePickerDialog({ sectionId, onAdd }: Props) {
         Adicionar exercício
       </button>
 
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={handleOpen}>
         <DialogContent className="bg-card border-border max-w-2xl flex flex-col gap-0 p-0 overflow-hidden" style={{ maxHeight: "85vh" }}>
           <DialogHeader className="px-5 pt-5 pb-4 border-b border-border/50">
             <DialogTitle>Adicionar Exercício</DialogTitle>
@@ -104,7 +112,6 @@ export function ExercisePickerDialog({ sectionId, onAdd }: Props) {
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Buscar exercício..."
-                // eslint-disable-next-line jsx-a11y/no-autofocus
                 autoFocus
                 className="w-full h-9 pl-9 pr-3 rounded-lg border border-border bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
               />
