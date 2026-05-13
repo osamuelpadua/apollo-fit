@@ -2,10 +2,11 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Dumbbell, ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { SidebarNav } from "./sidebar-nav"
 import { Separator } from "@/components/ui/separator"
+import { BrandLogo } from "@/components/shared/brand-logo"
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false)
@@ -21,21 +22,17 @@ export function Sidebar() {
       <div
         className={cn(
           "flex h-16 items-center border-b border-border px-4 shrink-0",
-          collapsed ? "justify-center" : "gap-2.5"
+          collapsed ? "justify-center" : "justify-start"
         )}
       >
         <Link
           href="/dashboard"
-          className="flex items-center gap-2.5 min-w-0"
-        >
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary">
-            <Dumbbell className="size-4 text-primary-foreground" />
-          </div>
-          {!collapsed && (
-            <span className="truncate text-base font-bold tracking-tight text-foreground">
-              Apolo Fit
-            </span>
+          className={cn(
+            "flex min-w-0 items-center",
+            collapsed ? "justify-center" : "justify-start"
           )}
+        >
+          <BrandLogo compact={collapsed} />
         </Link>
       </div>
 
