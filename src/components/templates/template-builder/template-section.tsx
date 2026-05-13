@@ -63,7 +63,7 @@ export function TemplateSection({
     setIsDeleting(true)
     const result = await deleteTemplateSection(section.id)
     if (result.error) {
-      toast.error("Erro ao excluir secao")
+      toast.error("Erro ao excluir seção")
       setIsDeleting(false)
     } else {
       onDelete(section.id)
@@ -85,13 +85,13 @@ export function TemplateSection({
           value={title}
           onChange={event => setTitle(event.target.value)}
           onBlur={saveTitle}
-          placeholder={`Secao ${section.label}`}
+          placeholder={`Seção ${section.label}`}
           className="min-w-0 flex-1 bg-transparent text-base font-semibold text-foreground placeholder:text-muted-foreground/40 focus:outline-none md:text-sm md:font-medium"
         />
         <button
           onClick={handleDelete}
           disabled={isDeleting}
-          title="Excluir secao"
+          title="Excluir seção"
           className="flex size-10 shrink-0 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive disabled:opacity-30 md:size-7"
         >
           <Trash2 className="size-4" />
@@ -105,7 +105,7 @@ export function TemplateSection({
         >
           {section.exercises.length === 0 ? (
             <p className="py-3 text-center text-xs text-muted-foreground/40">
-              Nenhum exercicio adicionado
+              Nenhum exercício adicionado
             </p>
           ) : (
             section.exercises.map(row => (

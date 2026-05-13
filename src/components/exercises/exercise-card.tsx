@@ -56,9 +56,9 @@ export function ExerciseCard({ exercise, isOwn }: Props) {
     startTransition(async () => {
       const result = await deleteExercise(exercise.id)
       if (result.error) {
-        toast.error("Erro ao excluir exercicio")
+        toast.error("Erro ao excluir exercício")
       } else {
-        toast.success("Exercicio excluido")
+        toast.success("Exercício excluído")
         setDeleteOpen(false)
         router.refresh()
       }
@@ -88,7 +88,7 @@ export function ExerciseCard({ exercise, isOwn }: Props) {
             </span>
           ) : (
             <span
-              title="Meu exercicio"
+              title="Meu exercício"
               className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10"
             >
               <Star className="size-4 text-primary" />
@@ -141,7 +141,7 @@ export function ExerciseCard({ exercise, isOwn }: Props) {
               variant="destructive"
               onClick={() => setDeleteOpen(true)}
               className="px-3"
-              aria-label={`Excluir exercicio ${exercise.name}`}
+              aria-label={`Excluir exercício ${exercise.name}`}
             >
               <Trash2 className="size-4" />
             </Button>
@@ -154,8 +154,8 @@ export function ExerciseCard({ exercise, isOwn }: Props) {
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir {exercise.name}?</AlertDialogTitle>
             <AlertDialogDescription>
-              Este exercicio sera removido da sua biblioteca. Treinos que ja o
-              utilizam nao serao afetados.
+              Este exercício será removido da sua biblioteca. Treinos que já o
+              utilizam não serão afetados.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

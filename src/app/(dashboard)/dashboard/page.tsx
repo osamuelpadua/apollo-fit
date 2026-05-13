@@ -38,7 +38,7 @@ const QUICK_ACTIONS = [
     icon: ClipboardList,
   },
   {
-    title: "Exercicios",
+    title: "Exercícios",
     desc: "Ver biblioteca",
     href: "/exercises",
     icon: TrendingUp,
@@ -71,7 +71,7 @@ export default async function DashboardPage() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
           <p className="text-sm text-muted-foreground">
-            Visao geral do seu studio
+            Visão geral do seu studio
           </p>
         </div>
         <Button
@@ -98,7 +98,7 @@ export default async function DashboardPage() {
           icon={ClipboardList}
         />
         <StatsCard
-          title="Este mes"
+          title="Este mês"
           value={stats.newStudentsThisMonth}
           description="Novos alunos"
           icon={TrendingUp}

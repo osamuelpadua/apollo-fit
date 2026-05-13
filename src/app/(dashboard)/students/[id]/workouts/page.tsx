@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const STATUS_LABELS: Record<string, string> = {
   active: "Ativo",
-  completed: "Concluido",
+  completed: "Concluído",
   archived: "Arquivado",
 }
 

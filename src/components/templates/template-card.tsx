@@ -35,7 +35,7 @@ export function TemplateCard({ template }: Props) {
       if (result.error) {
         toast.error("Erro ao excluir template")
       } else {
-        toast.success("Template excluido")
+        toast.success("Template excluído")
         setDeleteOpen(false)
         router.refresh()
       }
@@ -111,8 +111,8 @@ export function TemplateCard({ template }: Props) {
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir &quot;{template.name}&quot;?</AlertDialogTitle>
             <AlertDialogDescription>
-              O template e todas as suas secoes serao removidos. Treinos ja
-              criados a partir dele nao serao afetados.
+              O template e todas as suas seções serão removidos. Treinos já
+              criados a partir dele não serão afetados.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

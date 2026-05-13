@@ -68,13 +68,13 @@ export function StudentForm({ mode, studentId, initialData }: Props) {
               message: Array.isArray(msgs) ? msgs[0] : String(msgs),
             })
           })
-          toast.error("Verifique os campos do formulario")
+          toast.error("Verifique os campos do formulário")
         }
         return
       }
 
       toast.success(
-        mode === "create" ? "Aluno cadastrado!" : "Alteracoes salvas!"
+          mode === "create" ? "Aluno cadastrado!" : "Alterações salvas!"
       )
 
       if (mode === "create" && result.data) {
@@ -90,7 +90,7 @@ export function StudentForm({ mode, studentId, initialData }: Props) {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 md:space-y-6">
       <div className="space-y-5 rounded-xl border border-border bg-card p-4 md:p-6">
         <h3 className="text-base font-semibold text-foreground md:text-sm">
-          Informacoes pessoais
+          Informações pessoais
         </h3>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -145,7 +145,7 @@ export function StudentForm({ mode, studentId, initialData }: Props) {
           </div>
 
           <div className="space-y-1.5">
-            <Label>Genero</Label>
+            <Label>Gênero</Label>
             <Controller
               control={control}
               name="gender"
@@ -168,7 +168,7 @@ export function StudentForm({ mode, studentId, initialData }: Props) {
 
       <div className="space-y-5 rounded-xl border border-border bg-card p-4 md:p-6">
         <h3 className="text-base font-semibold text-foreground md:text-sm">
-          Objetivo e observacoes
+          Objetivo e observações
         </h3>
 
         <div className="space-y-1.5">
@@ -186,10 +186,10 @@ export function StudentForm({ mode, studentId, initialData }: Props) {
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="notes">Observacoes / Anamnese</Label>
+          <Label htmlFor="notes">Observações / Anamnese</Label>
           <Textarea
             id="notes"
-            placeholder="Lesoes, restricoes, historico relevante..."
+            placeholder="Lesões, restrições, histórico relevante..."
             rows={4}
             {...register("notes")}
           />
@@ -201,7 +201,7 @@ export function StudentForm({ mode, studentId, initialData }: Props) {
           <div className="min-w-0">
             <p className="text-sm font-semibold text-foreground">Aluno ativo</p>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Alunos inativos nao aparecem nas estatisticas do dashboard
+              Alunos inativos não aparecem nas estatísticas do dashboard
             </p>
           </div>
           <Controller
@@ -237,7 +237,7 @@ export function StudentForm({ mode, studentId, initialData }: Props) {
           ) : mode === "create" ? (
             "Cadastrar Aluno"
           ) : (
-            "Salvar Alteracoes"
+            "Salvar Alterações"
           )}
         </Button>
       </div>

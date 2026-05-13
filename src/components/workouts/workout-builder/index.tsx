@@ -99,7 +99,7 @@ export function WorkoutBuilder({ workout, exercises }: Props) {
       const nextLabel = String.fromCharCode(65 + sections.length)
       const result = await addSection(workout.id, nextLabel)
       if (result.error || !result.data) {
-        toast.error("Erro ao adicionar secao")
+        toast.error("Erro ao adicionar seção")
         return
       }
 
@@ -210,7 +210,7 @@ export function WorkoutBuilder({ workout, exercises }: Props) {
 
       {sections.length === 0 && (
         <p className="py-4 text-center text-sm text-muted-foreground">
-          Nenhuma secao criada. Adicione uma para comecar.
+          Nenhuma seção criada. Adicione uma para começar.
         </p>
       )}
 
@@ -219,7 +219,7 @@ export function WorkoutBuilder({ workout, exercises }: Props) {
         className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border/60 py-4 text-sm font-semibold text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
       >
         <Plus className="size-4" />
-        Adicionar secao
+        Adicionar seção
       </button>
     </div>
   )

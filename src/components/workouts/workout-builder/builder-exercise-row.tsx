@@ -61,7 +61,7 @@ export function BuilderExerciseRow({ row, onDelete }: Props) {
     setIsDeleting(true)
     const result = await deleteWorkoutExercise(row.id)
     if (result.error) {
-      toast.error("Erro ao remover exercicio")
+      toast.error("Erro ao remover exercício")
       setIsDeleting(false)
     } else {
       onDelete(row.id)
@@ -83,7 +83,7 @@ export function BuilderExerciseRow({ row, onDelete }: Props) {
           {...listeners}
           className="flex size-10 shrink-0 cursor-grab touch-none items-center justify-center rounded-lg text-muted-foreground/60 transition-colors active:cursor-grabbing active:bg-accent hover:text-muted-foreground md:size-7"
           tabIndex={-1}
-          aria-label="Reordenar exercicio"
+          aria-label="Reordenar exercício"
         >
           <GripVertical className="size-5 md:size-4" />
         </button>
@@ -101,7 +101,7 @@ export function BuilderExerciseRow({ row, onDelete }: Props) {
           onClick={handleDelete}
           disabled={isDeleting}
           className="flex size-10 shrink-0 items-center justify-center rounded-lg text-muted-foreground/70 transition-colors hover:bg-destructive/10 hover:text-destructive disabled:opacity-30 md:size-7 md:opacity-70 md:group-hover:opacity-100"
-          aria-label="Remover exercicio"
+          aria-label="Remover exercício"
         >
           <Trash2 className="size-4 md:size-3.5" />
         </button>

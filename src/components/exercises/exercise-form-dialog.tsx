@@ -88,7 +88,7 @@ export function ExerciseFormDialog({ exercise, trigger, onSuccess }: Props) {
         return
       }
 
-      toast.success(isEdit ? "Exercicio atualizado!" : "Exercicio criado!")
+      toast.success(isEdit ? "Exercício atualizado!" : "Exercício criado!")
       handleOpen(false)
       onSuccess?.()
     })
@@ -110,7 +110,7 @@ export function ExerciseFormDialog({ exercise, trigger, onSuccess }: Props) {
         {trigger ?? (
           <Button className="cursor-pointer bg-primary font-semibold text-primary-foreground hover:bg-[var(--primary-hover)]">
             <Plus className="size-4" />
-            Novo Exercicio
+            Novo Exercício
           </Button>
         )}
       </div>
@@ -120,7 +120,7 @@ export function ExerciseFormDialog({ exercise, trigger, onSuccess }: Props) {
           <DialogHeader className="border-b border-border/60 px-4 pb-3 pt-4 sm:border-0 sm:p-0">
             <span className="mx-auto mb-1 h-1 w-10 rounded-full bg-muted-foreground/30 sm:hidden" />
             <DialogTitle>
-              {isEdit ? "Editar Exercicio" : "Novo Exercicio"}
+              {isEdit ? "Editar Exercício" : "Novo Exercício"}
             </DialogTitle>
           </DialogHeader>
 
@@ -226,17 +226,17 @@ export function ExerciseFormDialog({ exercise, trigger, onSuccess }: Props) {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="ex-desc">Descricao</Label>
+              <Label htmlFor="ex-desc">Descrição</Label>
               <Textarea
                 id="ex-desc"
-                placeholder="Breve descricao do exercicio..."
+                placeholder="Breve descrição do exercício..."
                 rows={2}
                 {...register("description")}
               />
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="ex-instr">Instrucoes de execucao</Label>
+              <Label htmlFor="ex-instr">Instruções de execução</Label>
               <Textarea
                 id="ex-instr"
                 placeholder="Passo a passo de como executar corretamente..."
@@ -268,7 +268,7 @@ export function ExerciseFormDialog({ exercise, trigger, onSuccess }: Props) {
                 ) : isEdit ? (
                   "Salvar"
                 ) : (
-                  "Criar Exercicio"
+                  "Criar Exercício"
                 )}
               </Button>
             </div>

@@ -90,7 +90,7 @@ export default async function StudentsPage({ searchParams }: Props) {
           description={
             q
               ? `Nenhum resultado para "${q}". Tente outro nome.`
-              : "Cadastre seu primeiro aluno para comecar a gerenciar treinos."
+              : "Cadastre seu primeiro aluno para começar a gerenciar treinos."
           }
         >
           {!q && (

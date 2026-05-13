@@ -106,7 +106,7 @@ export function NewWorkoutForm({ students }: Props) {
         </Label>
         <Input
           id="workout-name"
-          placeholder="Ex: Treino A - Peito e Triceps"
+          placeholder="Ex: Treino A - Peito e Tríceps"
           {...register("name")}
           className={errors.name ? "border-destructive" : ""}
         />

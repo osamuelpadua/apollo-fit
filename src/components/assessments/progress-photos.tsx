@@ -85,7 +85,7 @@ export function ProgressPhotos({ photos: initialPhotos, studentId }: Props) {
       if (result.error) {
         toast.error("Erro ao excluir foto")
       } else {
-        toast.success("Foto excluida")
+        toast.success("Foto excluída")
         setDeleteTarget(null)
         router.refresh()
       }
@@ -137,7 +137,7 @@ export function ProgressPhotos({ photos: initialPhotos, studentId }: Props) {
           <Camera className="mb-3 size-8 text-muted-foreground/30" />
           <p className="text-sm text-muted-foreground">Nenhuma foto adicionada</p>
           <p className="mt-1 text-xs text-muted-foreground/60">
-            Selecione um angulo e faca upload da primeira foto
+            Selecione um ângulo e faça upload da primeira foto
           </p>
         </div>
       ) : (
@@ -197,7 +197,7 @@ export function ProgressPhotos({ photos: initialPhotos, studentId }: Props) {
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir foto?</AlertDialogTitle>
             <AlertDialogDescription>
-              A foto sera removida permanentemente.
+              A foto será removida permanentemente.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

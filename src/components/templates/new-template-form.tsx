@@ -82,10 +82,10 @@ export function NewTemplateForm() {
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="tpl-desc">Descricao</Label>
+        <Label htmlFor="tpl-desc">Descrição</Label>
         <Textarea
           id="tpl-desc"
-          placeholder="Descreva para qual perfil de aluno este template e indicado..."
+          placeholder="Descreva para qual perfil de aluno este template é indicado..."
           rows={3}
           {...register("description")}
         />

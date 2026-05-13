@@ -43,7 +43,7 @@ export function WorkoutCard({ workout }: Props) {
       if (result.error) {
         toast.error("Erro ao excluir treino")
       } else {
-        toast.success("Treino excluido")
+        toast.success("Treino excluído")
         setDeleteOpen(false)
         router.refresh()
       }
@@ -121,7 +121,7 @@ export function WorkoutCard({ workout }: Props) {
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir &quot;{workout.name}&quot;?</AlertDialogTitle>
             <AlertDialogDescription>
-              O treino e todas as suas secoes e exercicios serao removidos
+              O treino e todas as suas seções e exercícios serão removidos
               permanentemente.
             </AlertDialogDescription>
           </AlertDialogHeader>

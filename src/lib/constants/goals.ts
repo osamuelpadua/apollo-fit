@@ -3,14 +3,14 @@ export const GOAL_EMPTY_VALUE = "__none__"
 export const COMMON_GOAL_OPTIONS = [
   "Hipertrofia",
   "Emagrecimento",
-  "Definicao muscular",
-  "Ganho de forca",
-  "Condicionamento fisico",
-  "Saude e qualidade de vida",
+  "Definição muscular",
+  "Ganho de força",
+  "Condicionamento físico",
+  "Saúde e qualidade de vida",
   "Performance esportiva",
   "Mobilidade e flexibilidade",
-  "Reabilitacao",
-  "Manutencao",
+  "Reabilitação",
+  "Manutenção",
   "Outro",
 ]
 

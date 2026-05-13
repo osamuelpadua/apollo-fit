@@ -82,12 +82,12 @@ export function AssessmentFormDialog({ studentId, assessment, trigger }: Props) 
         toast.error(
           typeof result.error === "string"
             ? result.error
-            : "Erro ao salvar avaliacao"
+            : "Erro ao salvar avaliação"
         )
         return
       }
 
-      toast.success(isEdit ? "Avaliacao atualizada!" : "Avaliacao registrada!")
+      toast.success(isEdit ? "Avaliação atualizada!" : "Avaliação registrada!")
       handleOpen(false)
       router.refresh()
     })
@@ -138,7 +138,7 @@ export function AssessmentFormDialog({ studentId, assessment, trigger }: Props) 
         {trigger ?? (
           <Button className="bg-primary font-semibold text-primary-foreground hover:bg-[var(--primary-hover)]">
             <Plus className="size-4" />
-            Nova Avaliacao
+            Nova Avaliação
           </Button>
         )}
       </div>
@@ -148,7 +148,7 @@ export function AssessmentFormDialog({ studentId, assessment, trigger }: Props) 
           <DialogHeader className="border-b border-border/60 px-4 pb-3 pt-4 sm:border-0 sm:p-0">
             <span className="mx-auto mb-1 h-1 w-10 rounded-full bg-muted-foreground/30 sm:hidden" />
             <DialogTitle>
-              {isEdit ? "Editar Avaliacao" : "Nova Avaliacao"}
+              {isEdit ? "Editar Avaliação" : "Nova Avaliação"}
             </DialogTitle>
           </DialogHeader>
 
@@ -158,7 +158,7 @@ export function AssessmentFormDialog({ studentId, assessment, trigger }: Props) 
           >
             <div className="space-y-1.5">
               <Label htmlFor="ass-date">
-                Data da avaliacao <span className="text-primary">*</span>
+                Data da avaliação <span className="text-primary">*</span>
               </Label>
               <input
                 id="ass-date"
@@ -175,7 +175,7 @@ export function AssessmentFormDialog({ studentId, assessment, trigger }: Props) 
 
             <div>
               <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Composicao corporal
+                Composição corporal
               </p>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                 {compositionFields.map(({ id, label, name }) => (
@@ -222,10 +222,10 @@ export function AssessmentFormDialog({ studentId, assessment, trigger }: Props) 
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="ass-notes">Observacoes</Label>
+              <Label htmlFor="ass-notes">Observações</Label>
               <Textarea
                 id="ass-notes"
-                placeholder="Notas sobre a avaliacao..."
+                placeholder="Notas sobre a avaliação..."
                 rows={2}
                 {...register("notes")}
               />

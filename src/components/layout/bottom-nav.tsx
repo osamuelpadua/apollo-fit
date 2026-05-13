@@ -13,10 +13,10 @@ import {
 import { cn } from "@/lib/utils"
 
 const NAV_ITEMS = [
-  { label: "Inicio", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Início", href: "/dashboard", icon: LayoutDashboard },
   { label: "Alunos", href: "/students", icon: Users },
   { label: "Treinos", href: "/workouts", icon: ClipboardList },
-  { label: "Exercicios", href: "/exercises", icon: Dumbbell },
+  { label: "Exercícios", href: "/exercises", icon: Dumbbell },
   { label: "Templates", href: "/templates", icon: LayoutTemplate },
 ]
 

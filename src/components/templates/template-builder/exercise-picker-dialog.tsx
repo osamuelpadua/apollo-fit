@@ -52,7 +52,7 @@ export function TemplateExercisePicker({
     try {
       const result = await addTemplateExercise(sectionId, exercise.id)
       if ("error" in result) {
-        toast.error("Erro ao adicionar exercicio")
+        toast.error("Erro ao adicionar exercício")
         return
       }
 
@@ -92,7 +92,7 @@ export function TemplateExercisePicker({
         className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border/60 py-3 text-sm font-semibold text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
       >
         <Plus className="size-4" />
-        Adicionar exercicio
+        Adicionar exercício
       </button>
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -102,7 +102,7 @@ export function TemplateExercisePicker({
         >
           <DialogHeader className="border-b border-border/50 px-5 pb-4 pt-5">
             <span className="mx-auto mb-1 h-1 w-10 rounded-full bg-muted-foreground/30 sm:hidden" />
-            <DialogTitle>Adicionar Exercicio</DialogTitle>
+            <DialogTitle>Adicionar Exercício</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-3 border-b border-border/40 px-4 py-4 sm:px-5">
@@ -112,7 +112,7 @@ export function TemplateExercisePicker({
                 type="text"
                 value={search}
                 onChange={event => setSearch(event.target.value)}
-                placeholder="Buscar exercicio..."
+                placeholder="Buscar exercício..."
                 autoFocus
                 className="h-11 w-full rounded-lg border border-border bg-input/30 pl-9 pr-3 text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 sm:h-9 sm:text-sm"
               />
@@ -136,8 +136,8 @@ export function TemplateExercisePicker({
             {filtered.length === 0 ? (
               <p className="py-8 text-center text-sm text-muted-foreground">
                 {exercises.length === 0
-                  ? "Nenhum exercicio cadastrado na biblioteca"
-                  : "Nenhum exercicio encontrado"}
+                  ? "Nenhum exercício cadastrado na biblioteca"
+                  : "Nenhum exercício encontrado"}
               </p>
             ) : (
               filtered.map(exercise => (
@@ -169,7 +169,7 @@ export function TemplateExercisePicker({
 
           <div className="border-t border-border/50 bg-muted/20 px-5 py-3">
             <p className="text-center text-xs text-muted-foreground">
-              {filtered.length} exercicio{filtered.length !== 1 ? "s" : ""}
+              {filtered.length} exercício{filtered.length !== 1 ? "s" : ""}
             </p>
           </div>
         </DialogContent>

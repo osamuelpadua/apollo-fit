@@ -11,7 +11,7 @@ import { getExercises } from "@/features/exercises/queries"
 import { createClient } from "@/lib/supabase/server"
 import { MUSCLE_GROUP_LABELS, type MuscleGroup } from "@/types/database.types"
 
-export const metadata: Metadata = { title: "Exercicios" }
+export const metadata: Metadata = { title: "Exercícios" }
 
 interface Props {
   searchParams: Promise<{ q?: string; muscle?: string; source?: string }>
@@ -59,8 +59,8 @@ export default async function ExercisesPage({ searchParams }: Props) {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Biblioteca de Exercicios"
-        description={`${exercises.length} exercicio${exercises.length !== 1 ? "s" : ""}`}
+        title="Biblioteca de Exercícios"
+        description={`${exercises.length} exercício${exercises.length !== 1 ? "s" : ""}`}
       >
         <ExerciseFormDialog />
       </PageHeader>
@@ -103,11 +103,11 @@ export default async function ExercisesPage({ searchParams }: Props) {
       {exercises.length === 0 ? (
         <EmptyState
           icon={Dumbbell}
-          title={q ? "Nenhum exercicio encontrado" : "Nenhum exercicio na biblioteca"}
+          title={q ? "Nenhum exercício encontrado" : "Nenhum exercício na biblioteca"}
           description={
             q
               ? `Nenhum resultado para "${q}". Tente outro termo.`
-              : "Crie seu primeiro exercicio personalizado ou explore os globais."
+              : "Crie seu primeiro exercício personalizado ou explore os globais."
           }
         >
           {!q && <ExerciseFormDialog />}
