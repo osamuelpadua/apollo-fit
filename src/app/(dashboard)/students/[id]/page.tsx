@@ -132,39 +132,33 @@ export default async function StudentDetailPage({ params }: Props) {
       )}
 
       {/* Quick links */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 gap-3">
         {[
           {
             icon: Dumbbell,
             label: "Treinos",
-            desc: "Ver e gerenciar treinos",
             href: `/students/${id}/workouts`,
           },
           {
             icon: ClipboardList,
             label: "Avaliações",
-            desc: "Histórico de avaliações",
             href: `/students/${id}/assessments`,
           },
           {
             icon: Paperclip,
             label: "Arquivos",
-            desc: "Exames e documentos",
             href: `/students/${id}/files`,
           },
-        ].map(({ icon: Icon, label, desc, href }) => (
+        ].map(({ icon: Icon, label, href }) => (
           <Link
             key={label}
             href={href}
-            className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 hover:border-primary/30 hover:bg-primary/5 transition-all group"
+            className="flex flex-col items-center gap-2.5 rounded-xl bg-card border border-border p-4 hover:border-primary/30 hover:bg-primary/5 transition-all active:scale-[0.96] active:bg-primary/10 text-center"
           >
-            <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
-              <Icon className="size-4 text-primary" />
+            <div className="flex size-11 items-center justify-center rounded-xl bg-primary/10">
+              <Icon className="size-5 text-primary" />
             </div>
-            <div>
-              <p className="text-sm font-semibold text-foreground">{label}</p>
-              <p className="text-xs text-muted-foreground">{desc}</p>
-            </div>
+            <p className="text-xs font-semibold text-foreground">{label}</p>
           </Link>
         ))}
       </div>

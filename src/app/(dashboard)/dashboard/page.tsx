@@ -1,28 +1,53 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { Users, ClipboardList, TrendingUp, UserPlus } from "lucide-react"
+import { Users, ClipboardList, TrendingUp, UserPlus, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatsCard } from "@/components/dashboard/stats-card"
 import { RecentStudentsList } from "@/components/dashboard/recent-students-list"
-import { PageHeader } from "@/components/shared/page-header"
 import { getDashboardStats, getRecentStudents } from "@/features/students/queries"
+import { getProfile } from "@/features/auth/actions"
 
 export const metadata: Metadata = {
   title: "Dashboard",
 }
 
+function getGreeting() {
+  const h = new Date().getHours()
+  if (h < 12) return "Bom dia"
+  if (h < 18) return "Boa tarde"
+  return "Boa noite"
+}
+
+const QUICK_ACTIONS = [
+  { title: "Novo Aluno",       desc: "Cadastrar aluno",       href: "/students/new",   icon: UserPlus    },
+  { title: "Criar Treino",     desc: "Novo programa",         href: "/workouts/new",   icon: ClipboardList },
+  { title: "Exercícios",       desc: "Ver biblioteca",        href: "/exercises",      icon: TrendingUp  },
+  { title: "Ver Alunos",       desc: "Lista completa",        href: "/students",       icon: Users       },
+]
+
 export default async function DashboardPage() {
-  const [stats, recentStudents] = await Promise.all([
+  const [stats, recentStudents, profile] = await Promise.all([
     getDashboardStats(),
     getRecentStudents(6),
+    getProfile(),
   ])
 
+  const firstName = profile?.full_name?.split(" ")[0] ?? "Personal"
+
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Dashboard"
-        description="Visão geral do seu studio"
-      >
+    <div className="space-y-5">
+      {/* Greeting — mobile only */}
+      <div className="md:hidden">
+        <p className="text-xs text-muted-foreground">{getGreeting()},</p>
+        <h1 className="text-xl font-bold text-foreground">{firstName} 💪</h1>
+      </div>
+
+      {/* Desktop page header */}
+      <div className="hidden md:flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+          <p className="text-sm text-muted-foreground">Visão geral do seu studio</p>
+        </div>
         <Button
           render={<Link href="/students/new" />}
           className="bg-primary hover:bg-[var(--primary-hover)] text-primary-foreground font-semibold"
@@ -30,102 +55,75 @@ export default async function DashboardPage() {
           <UserPlus className="size-4" />
           Novo Aluno
         </Button>
-      </PageHeader>
+      </div>
 
-      {/* Stats grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      {/* Stats grid — 2x2 no mobile, 4 cols no desktop */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatsCard
-          title="Alunos Ativos"
+          title="Ativos"
           value={stats.activeStudents}
-          description={`${stats.totalStudents} total cadastrados`}
+          description={`${stats.totalStudents} total`}
           icon={Users}
           variant="primary"
         />
         <StatsCard
-          title="Treinos Ativos"
+          title="Treinos"
           value={stats.activeWorkouts}
           description="Em andamento"
           icon={ClipboardList}
         />
         <StatsCard
-          title="Novos este mês"
+          title="Este mês"
           value={stats.newStudentsThisMonth}
-          description="Últimos 30 dias"
+          description="Novos alunos"
           icon={TrendingUp}
         />
         <StatsCard
-          title="Total de Alunos"
+          title="Total"
           value={stats.totalStudents}
-          description={`${stats.activeStudents} ativos`}
+          description="Alunos"
           icon={Users}
         />
       </div>
 
+      {/* Quick actions — scroll horizontal no mobile */}
+      <div className="-mx-4 md:mx-0 px-4 md:px-0">
+        <div className="flex gap-3 overflow-x-auto pb-1 md:grid md:grid-cols-4 md:overflow-visible scrollbar-none">
+          {QUICK_ACTIONS.map((action) => (
+            <Link
+              key={action.href}
+              href={action.href}
+              className="flex-shrink-0 w-36 md:w-auto flex flex-col items-start gap-3 rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/30 hover:bg-primary/5 active:scale-[0.97] active:bg-primary/10"
+            >
+              <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10">
+                <action.icon className="size-4 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-foreground leading-tight">{action.title}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{action.desc}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
       {/* Recent students */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-          <div>
-            <h2 className="text-base font-semibold text-foreground">
-              Alunos Recentes
-            </h2>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Últimos cadastros
-            </p>
-          </div>
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-border">
+          <p className="text-sm font-semibold text-foreground">Alunos Recentes</p>
           <Button
             render={<Link href="/students" />}
             variant="ghost"
             size="sm"
-            className="text-primary hover:text-primary hover:bg-primary/10 text-sm font-medium"
+            className="text-primary hover:text-primary hover:bg-primary/10 text-xs font-medium h-8 px-3 gap-1"
           >
             Ver todos
+            <ChevronRight className="size-3.5" />
           </Button>
         </div>
-        <div className="px-3 py-2">
+        <div className="px-3 py-1">
           <RecentStudentsList students={recentStudents} />
         </div>
-      </div>
-
-      {/* Quick actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {[
-          {
-            title: "Gerenciar Alunos",
-            description: "Cadastre e acompanhe seus alunos",
-            href: "/students",
-            icon: Users,
-          },
-          {
-            title: "Criar Treino",
-            description: "Monte um novo programa de treino",
-            href: "/workouts/new",
-            icon: ClipboardList,
-          },
-          {
-            title: "Biblioteca de Exercícios",
-            description: "Gerencie sua biblioteca de exercícios",
-            href: "/exercises",
-            icon: TrendingUp,
-          },
-        ].map((action) => (
-          <Link
-            key={action.href}
-            href={action.href}
-            className="group flex items-start gap-4 rounded-xl border border-border bg-card p-5 transition-all hover:border-primary/30 hover:bg-primary/5"
-          >
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent group-hover:bg-primary/10 transition-colors">
-              <action.icon className="size-5 text-muted-foreground group-hover:text-primary transition-colors" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                {action.title}
-              </p>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                {action.description}
-              </p>
-            </div>
-          </Link>
-        ))}
       </div>
     </div>
   )

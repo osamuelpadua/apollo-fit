@@ -79,7 +79,7 @@ export function AssessmentFormDialog({ studentId, assessment, trigger }: Props) 
     })
   }
 
-  const inputClass = "h-8 w-full rounded-lg border border-border/70 bg-input/30 px-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
+  const inputClass = "h-11 w-full rounded-lg border border-border/70 bg-input/30 px-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
 
   return (
     <>

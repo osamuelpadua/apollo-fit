@@ -108,7 +108,7 @@ export default async function StudentsPage({ searchParams }: Props) {
             <Link
               key={student.id}
               href={`/students/${student.id}`}
-              className="group flex items-start gap-4 rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
+              className="group flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/30 active:scale-[0.98] active:bg-primary/5"
             >
               <Avatar className="size-12 shrink-0">
                 <AvatarImage src={student.avatar_url ?? undefined} alt={student.full_name} />
