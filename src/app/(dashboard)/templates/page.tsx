@@ -5,12 +5,17 @@ import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/shared/page-header"
 import { EmptyState } from "@/components/shared/empty-state"
 import { TemplateCard } from "@/components/templates/template-card"
-import { getTemplates } from "@/features/templates/queries"
+import { getTemplates, type TemplateListItem } from "@/features/templates/queries"
 
 export const metadata: Metadata = { title: "Templates" }
 
 export default async function TemplatesPage() {
-  const templates = await getTemplates()
+  let templates: TemplateListItem[] = []
+  try {
+    templates = await getTemplates()
+  } catch {
+    templates = []
+  }
 
   return (
     <div className="space-y-6">

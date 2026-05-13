@@ -141,3 +141,13 @@ export async function uploadStudentAvatar(formData: FormData) {
   revalidatePath(`/students/${studentId}`)
   return { url: urlData.publicUrl }
 }
+
+export async function getStudentsForSelect() {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from("students")
+    .select("id, full_name")
+    .eq("is_active", true)
+    .order("full_name", { ascending: true })
+  return (data ?? []) as { id: string; full_name: string }[]
+}

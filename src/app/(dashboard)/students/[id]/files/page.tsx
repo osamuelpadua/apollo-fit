@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import Link from "next/link"
-import { ArrowLeft, FolderOpen } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/shared/page-header"
 import { getStudentById } from "@/features/students/queries"
+import { getStudentFiles, type StudentFile } from "@/features/students/file-actions"
+import { StudentFiles } from "@/components/students/student-files"
 
 interface Props {
   params: Promise<{ id: string }>
@@ -30,6 +32,13 @@ export default async function StudentFilesPage({ params }: Props) {
     notFound()
   }
 
+  let files: StudentFile[] = []
+  try {
+    files = await getStudentFiles(id)
+  } catch {
+    files = []
+  }
+
   return (
     <div className="space-y-5">
       <PageHeader title="Arquivos" description={student.full_name}>
@@ -39,15 +48,7 @@ export default async function StudentFilesPage({ params }: Props) {
         </Button>
       </PageHeader>
 
-      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/50 py-20 text-center px-6">
-        <div className="flex size-14 items-center justify-center rounded-full bg-accent mb-4">
-          <FolderOpen className="size-6 text-muted-foreground" />
-        </div>
-        <p className="font-semibold text-foreground">Em desenvolvimento</p>
-        <p className="mt-1.5 text-sm text-muted-foreground max-w-xs">
-          O upload de exames e documentos estará disponível em breve.
-        </p>
-      </div>
+      <StudentFiles files={files} studentId={id} />
     </div>
   )
 }

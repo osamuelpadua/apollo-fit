@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { getStudents } from "@/features/students/queries"
+import { getStudentsForSelect } from "@/features/students/actions"
 import { applyTemplate } from "@/features/templates/actions"
 
 interface Props {
@@ -41,8 +41,9 @@ export function ApplyTemplateDialog({ templateId, templateName, trigger }: Props
   useEffect(() => {
     if (open && students.length === 0) {
       setLoadingStudents(true)
-      getStudents({ active: true })
-        .then(data => setStudents(data.map(s => ({ id: s.id, full_name: s.full_name }))))
+      getStudentsForSelect()
+        .then(setStudents)
+        .catch(() => setStudents([]))
         .finally(() => setLoadingStudents(false))
     }
   }, [open, students.length])

@@ -1,7 +1,7 @@
 "use client"
 
 import { useTransition } from "react"
-import { LogOut, Settings, User } from "lucide-react"
+import { LogOut } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -44,9 +44,7 @@ export function UserMenu({ profile }: UserMenuProps) {
           <span className="max-w-32 truncate text-sm font-medium text-foreground leading-tight">
             {profile.full_name}
           </span>
-          <span className="text-xs text-muted-foreground leading-tight">
-            Personal Trainer
-          </span>
+          <span className="text-xs text-muted-foreground leading-tight">Personal Trainer</span>
         </div>
       </DropdownMenuTrigger>
 
@@ -54,15 +52,6 @@ export function UserMenu({ profile }: UserMenuProps) {
         <DropdownMenuLabel className="text-muted-foreground text-xs font-normal">
           {profile.email}
         </DropdownMenuLabel>
-        <DropdownMenuSeparator className="bg-border" />
-        <DropdownMenuItem className="gap-2 cursor-pointer hover:bg-accent">
-          <User className="size-4 text-muted-foreground" />
-          Perfil
-        </DropdownMenuItem>
-        <DropdownMenuItem className="gap-2 cursor-pointer hover:bg-accent">
-          <Settings className="size-4 text-muted-foreground" />
-          Configurações
-        </DropdownMenuItem>
         <DropdownMenuSeparator className="bg-border" />
         <DropdownMenuItem
           onClick={handleSignOut}
