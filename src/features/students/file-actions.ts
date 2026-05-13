@@ -10,7 +10,8 @@ export type StudentFile = {
   mime_type: string | null
   file_size: number | null
   created_at: string
-  public_url: string | null
+  file_url: string | null
+  download_url: string | null
 }
 
 const ACCEPTED_TYPES = [
@@ -39,9 +40,30 @@ export async function getStudentFiles(studentId: string): Promise<StudentFile[]>
     created_at: string
   }>
 
-  return files.map((f) => ({
-    ...f,
-    public_url: supabase.storage.from("student-files").getPublicUrl(f.storage_path).data.publicUrl,
+  const urls = await Promise.all(
+    files.map(async (file) => {
+      const [{ data: viewData }, { data: downloadData }] = await Promise.all([
+        supabase.storage
+          .from("student-files")
+          .createSignedUrl(file.storage_path, 60 * 60),
+        supabase.storage
+          .from("student-files")
+          .createSignedUrl(file.storage_path, 60 * 60, {
+            download: file.file_name,
+          }),
+      ])
+
+      return {
+        file_url: viewData?.signedUrl ?? null,
+        download_url: downloadData?.signedUrl ?? viewData?.signedUrl ?? null,
+      }
+    })
+  )
+
+  return files.map((file, index) => ({
+    ...file,
+    file_url: urls[index]?.file_url ?? null,
+    download_url: urls[index]?.download_url ?? null,
   }))
 }
 

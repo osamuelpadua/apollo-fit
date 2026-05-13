@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { toast } from "sonner"
 import {
-  Upload, Loader2, Trash2, FileText, FileImage, File, Download,
+  Upload, Loader2, Trash2, FileText, FileImage, File, Download, Eye,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -134,10 +134,10 @@ export function StudentFiles({ files, studentId }: Props) {
               className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3"
             >
               {/* Thumbnail or icon */}
-              {f.mime_type?.startsWith("image/") && f.public_url ? (
+              {f.mime_type?.startsWith("image/") && f.file_url ? (
                 <div className="relative size-10 rounded-lg overflow-hidden flex-shrink-0 bg-accent">
                   <Image
-                    src={f.public_url}
+                    src={f.file_url}
                     alt={f.file_name}
                     fill
                     className="object-cover"
@@ -160,14 +160,30 @@ export function StudentFiles({ files, studentId }: Props) {
 
               {/* Actions */}
               <div className="flex items-center gap-1 flex-shrink-0">
-                {f.public_url && (
+                {f.file_url && (
                   <Button
                     variant="ghost"
                     size="icon"
                     className="size-8"
                     render={
                       <a
-                        href={f.public_url}
+                        href={f.file_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      />
+                    }
+                  >
+                    <Eye className="size-4" />
+                  </Button>
+                )}
+                {f.download_url && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="size-8"
+                    render={
+                      <a
+                        href={f.download_url}
                         download={f.file_name}
                         target="_blank"
                         rel="noopener noreferrer"
