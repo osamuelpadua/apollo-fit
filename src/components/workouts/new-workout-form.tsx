@@ -1,11 +1,11 @@
 "use client"
 
 import { useTransition } from "react"
-import { useForm, Controller } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -16,8 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { workoutSchema, type WorkoutFormData } from "@/lib/validations/workout"
 import { createWorkout } from "@/features/workouts/actions"
+import { workoutSchema, type WorkoutFormData } from "@/lib/validations/workout"
 
 interface Props {
   students: { id: string; full_name: string }[]
@@ -59,14 +59,14 @@ export function NewWorkoutForm({ students }: Props) {
         }
         return
       }
+
       toast.success("Treino criado!")
       router.push(`/workouts/${result.data!.id}`)
     })
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 max-w-lg">
-      {/* Student */}
+    <form onSubmit={handleSubmit(onSubmit)} className="max-w-lg space-y-5">
       <div className="space-y-1.5">
         <Label>
           Aluno <span className="text-primary">*</span>
@@ -76,13 +76,13 @@ export function NewWorkoutForm({ students }: Props) {
           name="student_id"
           render={({ field }) => (
             <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className="w-full h-9">
+              <SelectTrigger className="h-11 w-full">
                 <SelectValue placeholder="Selecionar aluno..." />
               </SelectTrigger>
               <SelectContent>
-                {students.map(s => (
-                  <SelectItem key={s.id} value={s.id}>
-                    {s.full_name}
+                {students.map(student => (
+                  <SelectItem key={student.id} value={student.id}>
+                    {student.full_name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -99,14 +99,13 @@ export function NewWorkoutForm({ students }: Props) {
         )}
       </div>
 
-      {/* Name */}
       <div className="space-y-1.5">
         <Label htmlFor="workout-name">
           Nome do treino <span className="text-primary">*</span>
         </Label>
         <Input
           id="workout-name"
-          placeholder="Ex: Treino A — Peito e Tríceps"
+          placeholder="Ex: Treino A - Peito e Triceps"
           {...register("name")}
           className={errors.name ? "border-destructive" : ""}
         />
@@ -115,29 +114,29 @@ export function NewWorkoutForm({ students }: Props) {
         )}
       </div>
 
-      {/* Goal */}
       <div className="space-y-1.5">
         <Label htmlFor="workout-goal">Objetivo</Label>
         <Input
           id="workout-goal"
-          placeholder="Ex: Hipertrofia, Definição..."
+          placeholder="Ex: Hipertrofia, definicao..."
           {...register("goal")}
         />
       </div>
 
-      <div className="flex justify-end gap-3 pt-2">
+      <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end sm:gap-3">
         <Button
           type="button"
           variant="ghost"
           onClick={() => router.back()}
           disabled={isPending}
+          className="w-full sm:w-auto"
         >
           Cancelar
         </Button>
         <Button
           type="submit"
           disabled={isPending || students.length === 0}
-          className="bg-primary hover:bg-[var(--primary-hover)] text-primary-foreground font-semibold min-w-32"
+          className="w-full min-w-32 bg-primary font-semibold text-primary-foreground hover:bg-[var(--primary-hover)] sm:w-auto"
         >
           {isPending ? (
             <>

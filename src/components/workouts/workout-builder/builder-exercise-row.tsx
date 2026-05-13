@@ -61,43 +61,57 @@ export function BuilderExerciseRow({ row, onDelete }: Props) {
     setIsDeleting(true)
     const result = await deleteWorkoutExercise(row.id)
     if (result.error) {
-      toast.error("Erro ao remover exercício")
+      toast.error("Erro ao remover exercicio")
       setIsDeleting(false)
     } else {
       onDelete(row.id)
     }
   }
 
-  const muscleLabel = MUSCLE_GROUP_LABELS[row.exerciseMuscle as MuscleGroup] ?? row.exerciseMuscle
+  const muscleLabel =
+    MUSCLE_GROUP_LABELS[row.exerciseMuscle as MuscleGroup] ?? row.exerciseMuscle
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-2 rounded-lg border border-border bg-card/60 px-2 py-2 group transition-opacity ${isDeleting ? "opacity-50" : ""}`}
+      className={`group rounded-xl border border-border bg-card/70 p-3 transition-opacity md:flex md:items-center md:gap-2 md:rounded-lg md:px-2 md:py-2 ${isDeleting ? "opacity-50" : ""}`}
     >
-      {/* Drag handle */}
-      <button
-        {...attributes}
-        {...listeners}
-        className="shrink-0 cursor-grab active:cursor-grabbing text-muted-foreground/30 hover:text-muted-foreground/70 transition-colors touch-none p-0.5"
-        tabIndex={-1}
-      >
-        <GripVertical className="size-4" />
-      </button>
+      <div className="flex items-start gap-2 md:flex-1 md:items-center md:min-w-0">
+        <button
+          {...attributes}
+          {...listeners}
+          className="flex size-10 shrink-0 cursor-grab touch-none items-center justify-center rounded-lg text-muted-foreground/60 transition-colors active:cursor-grabbing active:bg-accent hover:text-muted-foreground md:size-7"
+          tabIndex={-1}
+          aria-label="Reordenar exercicio"
+        >
+          <GripVertical className="size-5 md:size-4" />
+        </button>
 
-      {/* Name */}
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-foreground truncate leading-tight">
-          {row.exerciseName}
-        </p>
-        <p className="text-[11px] text-muted-foreground">{muscleLabel}</p>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-base font-semibold leading-tight text-foreground md:text-sm md:font-medium">
+            {row.exerciseName}
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground md:mt-0 md:text-[11px]">
+            {muscleLabel}
+          </p>
+        </div>
+
+        <button
+          onClick={handleDelete}
+          disabled={isDeleting}
+          className="flex size-10 shrink-0 items-center justify-center rounded-lg text-muted-foreground/70 transition-colors hover:bg-destructive/10 hover:text-destructive disabled:opacity-30 md:size-7 md:opacity-70 md:group-hover:opacity-100"
+          aria-label="Remover exercicio"
+        >
+          <Trash2 className="size-4 md:size-3.5" />
+        </button>
       </div>
 
-      {/* Fields */}
-      <div className="flex items-center gap-1 shrink-0">
-        {/* Sets */}
-        <div className="flex flex-col items-center gap-0.5">
+      <div className="mt-3 grid grid-cols-2 gap-2 md:mt-0 md:flex md:shrink-0 md:items-center md:gap-1">
+        <div className="flex flex-col gap-1 md:items-center md:gap-0.5">
+          <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground/70 md:text-[9px] md:font-normal md:normal-case md:tracking-normal md:text-muted-foreground/50">
+            Series
+          </span>
           <input
             type="number"
             value={sets}
@@ -106,41 +120,44 @@ export function BuilderExerciseRow({ row, onDelete }: Props) {
             min={1}
             max={99}
             placeholder="3"
-            className="w-11 h-7 text-center text-xs rounded-md border border-border/60 bg-input/30 px-1 focus:outline-none focus:border-primary/50 text-foreground"
+            className="h-11 w-full rounded-lg border border-border/60 bg-input/30 px-3 text-center text-base text-foreground focus:outline-none focus:border-primary/50 md:h-7 md:w-11 md:rounded-md md:px-1 md:text-xs"
           />
-          <span className="text-[9px] text-muted-foreground/50">séries</span>
         </div>
 
-        <span className="text-muted-foreground/30 text-xs leading-7">×</span>
+        <span className="hidden text-xs leading-7 text-muted-foreground/30 md:block">x</span>
 
-        {/* Reps */}
-        <div className="flex flex-col items-center gap-0.5">
+        <div className="flex flex-col gap-1 md:items-center md:gap-0.5">
+          <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground/70 md:text-[9px] md:font-normal md:normal-case md:tracking-normal md:text-muted-foreground/50">
+            Reps
+          </span>
           <input
             type="text"
             value={reps}
             onChange={e => setReps(e.target.value)}
             onBlur={() => saveField({ reps: reps || null })}
             placeholder="12"
-            className="w-14 h-7 text-center text-xs rounded-md border border-border/60 bg-input/30 px-1 focus:outline-none focus:border-primary/50 text-foreground"
+            className="h-11 w-full rounded-lg border border-border/60 bg-input/30 px-3 text-center text-base text-foreground focus:outline-none focus:border-primary/50 md:h-7 md:w-14 md:rounded-md md:px-1 md:text-xs"
           />
-          <span className="text-[9px] text-muted-foreground/50">reps</span>
         </div>
 
-        {/* Load */}
-        <div className="flex flex-col items-center gap-0.5">
+        <div className="flex flex-col gap-1 md:items-center md:gap-0.5">
+          <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground/70 md:text-[9px] md:font-normal md:normal-case md:tracking-normal md:text-muted-foreground/50">
+            Carga
+          </span>
           <input
             type="text"
             value={load}
             onChange={e => setLoad(e.target.value)}
             onBlur={() => saveField({ load: load || null })}
-            placeholder="—"
-            className="w-20 h-7 text-center text-xs rounded-md border border-border/60 bg-input/30 px-1 focus:outline-none focus:border-primary/50 text-foreground"
+            placeholder="-"
+            className="h-11 w-full rounded-lg border border-border/60 bg-input/30 px-3 text-center text-base text-foreground focus:outline-none focus:border-primary/50 md:h-7 md:w-20 md:rounded-md md:px-1 md:text-xs"
           />
-          <span className="text-[9px] text-muted-foreground/50">carga</span>
         </div>
 
-        {/* Rest */}
-        <div className="flex flex-col items-center gap-0.5">
+        <div className="flex flex-col gap-1 md:items-center md:gap-0.5">
+          <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground/70 md:text-[9px] md:font-normal md:normal-case md:tracking-normal md:text-muted-foreground/50">
+            Descanso
+          </span>
           <div className="flex items-center">
             <input
               type="number"
@@ -150,24 +167,14 @@ export function BuilderExerciseRow({ row, onDelete }: Props) {
               min={0}
               max={600}
               placeholder="60"
-              className="w-12 h-7 text-center text-xs rounded-l-md border border-r-0 border-border/60 bg-input/30 px-1 focus:outline-none focus:border-primary/50 text-foreground"
+              className="h-11 w-full min-w-0 rounded-l-lg border border-r-0 border-border/60 bg-input/30 px-3 text-center text-base text-foreground focus:outline-none focus:border-primary/50 md:h-7 md:w-12 md:rounded-l-md md:px-1 md:text-xs"
             />
-            <span className="h-7 flex items-center px-1.5 text-xs text-muted-foreground border border-l-0 border-border/60 rounded-r-md bg-input/30">
+            <span className="flex h-11 items-center rounded-r-lg border border-l-0 border-border/60 bg-input/30 px-3 text-sm text-muted-foreground md:h-7 md:rounded-r-md md:px-1.5 md:text-xs">
               s
             </span>
           </div>
-          <span className="text-[9px] text-muted-foreground/50">descanso</span>
         </div>
       </div>
-
-      {/* Delete */}
-      <button
-        onClick={handleDelete}
-        disabled={isDeleting}
-        className="shrink-0 p-1 text-muted-foreground/30 hover:text-destructive transition-colors opacity-0 group-hover:opacity-100 disabled:opacity-30"
-      >
-        <Trash2 className="size-3.5" />
-      </button>
     </div>
   )
 }

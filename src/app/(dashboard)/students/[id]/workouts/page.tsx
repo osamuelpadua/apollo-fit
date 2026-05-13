@@ -1,11 +1,11 @@
-import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import Link from "next/link"
+import { notFound } from "next/navigation"
 import { ArrowLeft, ClipboardList, Plus } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { PageHeader } from "@/components/shared/page-header"
 import { EmptyState } from "@/components/shared/empty-state"
+import { PageHeader } from "@/components/shared/page-header"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { getStudentById } from "@/features/students/queries"
 import { getWorkouts } from "@/features/workouts/queries"
 
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params
   try {
     const student = await getStudentById(id)
-    return { title: `Treinos — ${student.full_name}` }
+    return { title: `Treinos - ${student.full_name}` }
   } catch {
     return { title: "Treinos" }
   }
@@ -25,9 +25,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const STATUS_LABELS: Record<string, string> = {
   active: "Ativo",
-  completed: "Concluído",
+  completed: "Concluido",
   archived: "Arquivado",
 }
+
 const STATUS_COLORS: Record<string, string> = {
   active: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
   completed: "bg-blue-500/10 text-blue-500 border-blue-500/20",
@@ -48,18 +49,19 @@ export default async function StudentWorkoutsPage({ params }: Props) {
 
   return (
     <div className="space-y-5">
-      <PageHeader
-        title="Treinos"
-        description={student.full_name}
-      >
-        <div className="flex items-center gap-2">
-          <Button render={<Link href={`/students/${id}`} />} variant="ghost" size="sm">
+      <PageHeader title="Treinos" description={student.full_name}>
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+          <Button
+            render={<Link href={`/students/${id}`} />}
+            variant="ghost"
+            className="w-full sm:w-auto"
+          >
             <ArrowLeft className="size-4" />
             Perfil
           </Button>
           <Button
-            render={<Link href={`/workouts/new`} />}
-            className="bg-primary hover:bg-[var(--primary-hover)] text-primary-foreground font-semibold"
+            render={<Link href="/workouts/new" />}
+            className="w-full bg-primary font-semibold text-primary-foreground hover:bg-[var(--primary-hover)] sm:w-auto"
           >
             <Plus className="size-4" />
             Novo Treino
@@ -75,7 +77,7 @@ export default async function StudentWorkoutsPage({ params }: Props) {
         >
           <Button
             render={<Link href="/workouts/new" />}
-            className="bg-primary hover:bg-[var(--primary-hover)] text-primary-foreground"
+            className="bg-primary text-primary-foreground hover:bg-[var(--primary-hover)]"
           >
             <Plus className="size-4" />
             Criar Treino
@@ -83,22 +85,24 @@ export default async function StudentWorkoutsPage({ params }: Props) {
         </EmptyState>
       ) : (
         <div className="space-y-3">
-          {workouts.map((workout) => (
+          {workouts.map(workout => (
             <Link
               key={workout.id}
               href={`/workouts/${workout.id}`}
-              className="flex items-center gap-4 rounded-xl border border-border bg-card px-5 py-4 hover:border-primary/30 hover:bg-primary/5 transition-all active:scale-[0.99]"
+              className="flex min-h-[92px] items-center gap-4 rounded-xl border border-border bg-card px-4 py-4 transition-all hover:border-primary/30 hover:bg-primary/5 active:scale-[0.99] md:px-5"
             >
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-foreground truncate">{workout.name}</p>
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-semibold text-foreground">
+                  {workout.name}
+                </p>
                 {workout.workout_sections.length > 0 && (
-                  <div className="flex gap-1.5 mt-1.5">
-                    {workout.workout_sections.map((s) => (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {workout.workout_sections.map(section => (
                       <span
-                        key={s.id}
-                        className="inline-flex items-center rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary"
+                        key={section.id}
+                        className="inline-flex min-h-7 min-w-7 items-center justify-center rounded-lg bg-primary/10 px-2 text-xs font-bold text-primary"
                       >
-                        {s.label}
+                        {section.label}
                       </span>
                     ))}
                   </div>

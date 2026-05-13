@@ -1,7 +1,7 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
 import { format, formatDistanceToNow, differenceInYears } from "date-fns"
 import { ptBR } from "date-fns/locale"
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -24,17 +24,17 @@ export function calculateAge(dateOfBirth: string | Date): number {
 }
 
 export function formatWeight(value: number | null | undefined): string {
-  if (value == null) return "—"
+  if (value == null) return "-"
   return `${value.toFixed(1)} kg`
 }
 
 export function formatHeight(value: number | null | undefined): string {
-  if (value == null) return "—"
+  if (value == null) return "-"
   return `${value.toFixed(0)} cm`
 }
 
 export function formatPercentage(value: number | null | undefined): string {
-  if (value == null) return "—"
+  if (value == null) return "-"
   return `${value.toFixed(1)}%`
 }
 
@@ -49,7 +49,7 @@ export function getInitials(name: string): string {
     .split(" ")
     .filter(Boolean)
     .slice(0, 2)
-    .map((n) => n[0].toUpperCase())
+    .map(namePart => namePart[0].toUpperCase())
     .join("")
 }
 
@@ -57,7 +57,7 @@ export function slugify(text: string): string {
   return text
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-")

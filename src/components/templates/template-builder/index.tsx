@@ -3,27 +3,27 @@
 import { useState, useTransition } from "react"
 import Link from "next/link"
 import {
-  DndContext,
   closestCenter,
+  DndContext,
   PointerSensor,
   useSensor,
   useSensors,
   type DragEndEvent,
 } from "@dnd-kit/core"
-import { arrayMove } from "@dnd-kit/sortable"
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers"
-import { ArrowLeft, Plus, Copy } from "lucide-react"
+import { arrayMove } from "@dnd-kit/sortable"
+import { ArrowLeft, Copy, Plus } from "lucide-react"
 import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
-import { TemplateSection, type TSectionState } from "./template-section"
-import type { TExRow } from "./template-exercise-row"
 import { ApplyTemplateDialog } from "@/components/templates/apply-template-dialog"
+import { Button } from "@/components/ui/button"
 import {
   addTemplateSection,
   reorderTemplateExercises,
   updateTemplate,
 } from "@/features/templates/actions"
 import type { TemplateDetail } from "@/features/templates/queries"
+import type { TExRow } from "./template-exercise-row"
+import { TemplateSection, type TSectionState } from "./template-section"
 
 interface Props {
   template: TemplateDetail
@@ -32,22 +32,22 @@ interface Props {
 export function TemplateBuilder({ template }: Props) {
   const [templateName, setTemplateName] = useState(template.name)
   const [sections, setSections] = useState<TSectionState[]>(() =>
-    template.workout_template_sections.map(s => ({
-      id: s.id,
-      label: s.label,
-      title: s.title,
-      sort_order: s.sort_order,
-      exercises: s.workout_template_exercises.map(e => ({
-        id: e.id,
-        exercise_id: e.exercise_id,
-        sort_order: e.sort_order,
-        sets: e.sets,
-        reps: e.reps,
-        load: e.load,
-        rest_seconds: e.rest_seconds,
-        notes: e.notes,
-        exerciseName: e.exercises?.name ?? "",
-        exerciseMuscle: e.exercises?.muscle_group ?? "",
+    template.workout_template_sections.map(section => ({
+      id: section.id,
+      label: section.label,
+      title: section.title,
+      sort_order: section.sort_order,
+      exercises: section.workout_template_exercises.map(exercise => ({
+        id: exercise.id,
+        exercise_id: exercise.exercise_id,
+        sort_order: exercise.sort_order,
+        sets: exercise.sets,
+        reps: exercise.reps,
+        load: exercise.load,
+        rest_seconds: exercise.rest_seconds,
+        notes: exercise.notes,
+        exerciseName: exercise.exercises?.name ?? "",
+        exerciseMuscle: exercise.exercises?.muscle_group ?? "",
       })),
     }))
   )
@@ -61,29 +61,34 @@ export function TemplateBuilder({ template }: Props) {
     const { active, over } = event
     if (!over || active.id === over.id) return
 
-    const sectionIdx = sections.findIndex(s =>
-      s.exercises.some(e => e.id === active.id)
+    const sectionIndex = sections.findIndex(section =>
+      section.exercises.some(exercise => exercise.id === active.id)
     )
-    if (sectionIdx === -1) return
+    if (sectionIndex === -1) return
 
-    const section = sections[sectionIdx]
-    const oldIdx = section.exercises.findIndex(e => e.id === active.id)
-    const newIdx = section.exercises.findIndex(e => e.id === over.id)
-    if (oldIdx === newIdx) return
+    const section = sections[sectionIndex]
+    const oldIndex = section.exercises.findIndex(exercise => exercise.id === active.id)
+    const newIndex = section.exercises.findIndex(exercise => exercise.id === over.id)
+    if (oldIndex === newIndex) return
 
-    const newExercises = arrayMove(section.exercises, oldIdx, newIdx).map(
-      (e, i) => ({ ...e, sort_order: i })
+    const nextExercises = arrayMove(section.exercises, oldIndex, newIndex).map(
+      (exercise, index) => ({ ...exercise, sort_order: index })
     )
 
-    setSections(prev =>
-      prev.map((s, i) =>
-        i === sectionIdx ? { ...s, exercises: newExercises } : s
+    setSections(previousSections =>
+      previousSections.map((currentSection, index) =>
+        index === sectionIndex
+          ? { ...currentSection, exercises: nextExercises }
+          : currentSection
       )
     )
 
     startTransition(async () => {
       await reorderTemplateExercises(
-        newExercises.map(e => ({ id: e.id, sort_order: e.sort_order }))
+        nextExercises.map(exercise => ({
+          id: exercise.id,
+          sort_order: exercise.sort_order,
+        }))
       )
     })
   }
@@ -93,11 +98,12 @@ export function TemplateBuilder({ template }: Props) {
       const nextLabel = String.fromCharCode(65 + sections.length)
       const result = await addTemplateSection(template.id, nextLabel)
       if (result.error || !result.data) {
-        toast.error("Erro ao adicionar seção")
+        toast.error("Erro ao adicionar secao")
         return
       }
-      setSections(prev => [
-        ...prev,
+
+      setSections(previousSections => [
+        ...previousSections,
         {
           id: result.data!.id,
           label: result.data!.label,
@@ -110,23 +116,32 @@ export function TemplateBuilder({ template }: Props) {
   }
 
   function handleSectionDelete(sectionId: string) {
-    setSections(prev => prev.filter(s => s.id !== sectionId))
+    setSections(previousSections =>
+      previousSections.filter(section => section.id !== sectionId)
+    )
   }
 
   function handleExerciseAdd(sectionId: string, _exerciseId: string, row: TExRow) {
-    setSections(prev =>
-      prev.map(s =>
-        s.id === sectionId ? { ...s, exercises: [...s.exercises, row] } : s
+    setSections(previousSections =>
+      previousSections.map(section =>
+        section.id === sectionId
+          ? { ...section, exercises: [...section.exercises, row] }
+          : section
       )
     )
   }
 
   function handleExerciseDelete(sectionId: string, exerciseId: string) {
-    setSections(prev =>
-      prev.map(s =>
-        s.id === sectionId
-          ? { ...s, exercises: s.exercises.filter(e => e.id !== exerciseId) }
-          : s
+    setSections(previousSections =>
+      previousSections.map(section =>
+        section.id === sectionId
+          ? {
+              ...section,
+              exercises: section.exercises.filter(
+                exercise => exercise.id !== exerciseId
+              ),
+            }
+          : section
       )
     )
   }
@@ -134,6 +149,7 @@ export function TemplateBuilder({ template }: Props) {
   function handleNameBlur() {
     const trimmed = templateName.trim()
     if (!trimmed || trimmed === template.name) return
+
     startTransition(async () => {
       const result = await updateTemplate(template.id, { name: trimmed })
       if (result.error) toast.error("Erro ao salvar nome")
@@ -141,24 +157,24 @@ export function TemplateBuilder({ template }: Props) {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-start gap-3">
+    <div className="space-y-5 overflow-x-hidden">
+      <div className="flex flex-wrap items-start gap-2 md:flex-nowrap md:gap-3">
         <Button
           render={<Link href="/templates" />}
           variant="ghost"
           size="icon"
-          className="shrink-0 mt-1"
+          className="shrink-0"
         >
           <ArrowLeft className="size-4" />
         </Button>
-        <div className="flex-1 min-w-0">
+
+        <div className="min-w-0 flex-1">
           <input
             type="text"
             value={templateName}
-            onChange={e => setTemplateName(e.target.value)}
+            onChange={event => setTemplateName(event.target.value)}
             onBlur={handleNameBlur}
-            className="w-full bg-transparent text-2xl font-bold text-foreground placeholder:text-muted-foreground focus:outline-none border-b border-transparent focus:border-border/50 pb-0.5 transition-colors"
+            className="w-full border-b border-transparent bg-transparent pb-0.5 text-xl font-bold text-foreground transition-colors placeholder:text-muted-foreground focus:outline-none focus:border-border/50 md:text-2xl"
           />
           {template.goal && (
             <p className="mt-1 text-sm text-muted-foreground">
@@ -166,11 +182,12 @@ export function TemplateBuilder({ template }: Props) {
             </p>
           )}
         </div>
+
         <ApplyTemplateDialog
           templateId={template.id}
           templateName={template.name}
           trigger={
-            <Button className="bg-primary hover:bg-[var(--primary-hover)] text-primary-foreground font-semibold shrink-0">
+            <Button className="w-full shrink-0 bg-primary font-semibold text-primary-foreground hover:bg-[var(--primary-hover)] sm:w-auto">
               <Copy className="size-4" />
               Aplicar
             </Button>
@@ -178,7 +195,6 @@ export function TemplateBuilder({ template }: Props) {
         />
       </div>
 
-      {/* Sections */}
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -199,17 +215,17 @@ export function TemplateBuilder({ template }: Props) {
       </DndContext>
 
       {sections.length === 0 && (
-        <p className="text-sm text-muted-foreground text-center py-4">
-          Nenhuma seção criada. Adicione uma para começar.
+        <p className="py-4 text-center text-sm text-muted-foreground">
+          Nenhuma secao criada. Adicione uma para comecar.
         </p>
       )}
 
       <button
         onClick={handleAddSection}
-        className="w-full flex items-center justify-center gap-2 rounded-xl border border-dashed border-border/50 py-4 text-sm text-muted-foreground/60 hover:text-primary hover:border-primary/40 transition-colors"
+        className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border/60 py-4 text-sm font-semibold text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
       >
         <Plus className="size-4" />
-        Adicionar seção
+        Adicionar secao
       </button>
     </div>
   )

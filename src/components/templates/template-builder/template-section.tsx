@@ -4,9 +4,12 @@ import { useState, useTransition } from "react"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { Trash2 } from "lucide-react"
 import { toast } from "sonner"
-import { TemplateExerciseRow, type TExRow } from "./template-exercise-row"
+import {
+  deleteTemplateSection,
+  updateTemplateSection,
+} from "@/features/templates/actions"
 import { TemplateExercisePicker } from "./exercise-picker-dialog"
-import { deleteTemplateSection, updateTemplateSection } from "@/features/templates/actions"
+import { TemplateExerciseRow, type TExRow } from "./template-exercise-row"
 
 export type TSectionState = {
   id: string
@@ -33,12 +36,19 @@ interface Props {
   onExerciseDelete: (sectionId: string, exerciseId: string) => void
 }
 
-export function TemplateSection({ section, onDelete, onExerciseAdd, onExerciseDelete }: Props) {
+export function TemplateSection({
+  section,
+  onDelete,
+  onExerciseAdd,
+  onExerciseDelete,
+}: Props) {
   const [title, setTitle] = useState(section.title ?? "")
   const [isDeleting, setIsDeleting] = useState(false)
   const [, startTransition] = useTransition()
 
-  const labelColor = LABEL_COLORS[section.label] ?? "bg-muted text-muted-foreground border-border"
+  const labelColor =
+    LABEL_COLORS[section.label] ??
+    "bg-muted text-muted-foreground border-border"
 
   function saveTitle() {
     startTransition(async () => {
@@ -50,7 +60,7 @@ export function TemplateSection({ section, onDelete, onExerciseAdd, onExerciseDe
     setIsDeleting(true)
     const result = await deleteTemplateSection(section.id)
     if (result.error) {
-      toast.error("Erro ao excluir seção")
+      toast.error("Erro ao excluir secao")
       setIsDeleting(false)
     } else {
       onDelete(section.id)
@@ -59,40 +69,40 @@ export function TemplateSection({ section, onDelete, onExerciseAdd, onExerciseDe
 
   return (
     <div
-      className={`rounded-xl border border-border bg-card/20 overflow-hidden transition-opacity ${isDeleting ? "opacity-50" : ""}`}
+      className={`overflow-hidden rounded-xl border border-border bg-card/20 transition-opacity ${isDeleting ? "opacity-50" : ""}`}
     >
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-border/40 bg-card/40">
+      <div className="flex items-center gap-3 border-b border-border/40 bg-card/40 px-3 py-3 md:px-4">
         <span
-          className={`inline-flex items-center justify-center size-7 rounded-lg border text-sm font-bold shrink-0 ${labelColor}`}
+          className={`inline-flex size-9 shrink-0 items-center justify-center rounded-lg border text-base font-bold md:size-7 md:text-sm ${labelColor}`}
         >
           {section.label}
         </span>
         <input
           type="text"
           value={title}
-          onChange={e => setTitle(e.target.value)}
+          onChange={event => setTitle(event.target.value)}
           onBlur={saveTitle}
-          placeholder={`Seção ${section.label}`}
-          className="flex-1 bg-transparent text-sm font-medium text-foreground placeholder:text-muted-foreground/40 focus:outline-none min-w-0"
+          placeholder={`Secao ${section.label}`}
+          className="min-w-0 flex-1 bg-transparent text-base font-semibold text-foreground placeholder:text-muted-foreground/40 focus:outline-none md:text-sm md:font-medium"
         />
         <button
           onClick={handleDelete}
           disabled={isDeleting}
-          title="Excluir seção"
-          className="shrink-0 text-muted-foreground/30 hover:text-destructive transition-colors disabled:opacity-30"
+          title="Excluir secao"
+          className="flex size-10 shrink-0 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive disabled:opacity-30 md:size-7"
         >
           <Trash2 className="size-4" />
         </button>
       </div>
 
-      <div className="p-3 space-y-2">
+      <div className="space-y-3 p-3 md:space-y-2">
         <SortableContext
-          items={section.exercises.map(e => e.id)}
+          items={section.exercises.map(exercise => exercise.id)}
           strategy={verticalListSortingStrategy}
         >
           {section.exercises.length === 0 ? (
-            <p className="text-xs text-muted-foreground/40 text-center py-3">
-              Nenhum exercício adicionado
+            <p className="py-3 text-center text-xs text-muted-foreground/40">
+              Nenhum exercicio adicionado
             </p>
           ) : (
             section.exercises.map(row => (

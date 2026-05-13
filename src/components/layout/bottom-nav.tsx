@@ -4,20 +4,20 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import {
-  LayoutDashboard,
-  Users,
   ClipboardList,
   Dumbbell,
+  LayoutDashboard,
   LayoutTemplate,
+  Users,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const NAV_ITEMS = [
-  { label: "Início",      href: "/dashboard",  icon: LayoutDashboard },
-  { label: "Alunos",      href: "/students",   icon: Users           },
-  { label: "Treinos",     href: "/workouts",   icon: ClipboardList   },
-  { label: "Exercícios",  href: "/exercises",  icon: Dumbbell        },
-  { label: "Templates",   href: "/templates",  icon: LayoutTemplate  },
+  { label: "Inicio", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Alunos", href: "/students", icon: Users },
+  { label: "Treinos", href: "/workouts", icon: ClipboardList },
+  { label: "Exercicios", href: "/exercises", icon: Dumbbell },
+  { label: "Templates", href: "/templates", icon: LayoutTemplate },
 ]
 
 export function BottomNav() {
@@ -36,10 +36,10 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 md:hidden border-t border-border bg-background/90 backdrop-blur-xl"
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/90 backdrop-blur-xl md:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
-      <div className="flex h-16">
+      <div className="flex h-[68px]">
         {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
           const active =
             href === "/dashboard"
@@ -58,15 +58,15 @@ export function BottomNav() {
               )}
             >
               {active && (
-                <span className="absolute top-0 left-1/2 -translate-x-1/2 h-[2px] w-8 rounded-full bg-primary" />
+                <span className="absolute left-1/2 top-0 h-[2px] w-8 -translate-x-1/2 rounded-full bg-primary" />
               )}
               <Icon
                 className={cn(
-                  "size-[22px] transition-transform duration-150",
+                  "size-6 transition-transform duration-150",
                   active && "scale-110"
                 )}
               />
-              <span className="text-[10px] font-medium leading-none tracking-wide">
+              <span className="text-[11px] font-medium leading-none tracking-wide">
                 {label}
               </span>
             </Link>

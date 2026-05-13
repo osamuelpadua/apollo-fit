@@ -1,10 +1,10 @@
 "use client"
 
-import { useState, useTransition } from "react"
-import { useForm, Controller } from "react-hook-form"
+import { useState, useTransition, type ReactElement } from "react"
+import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { Loader2, Plus } from "lucide-react"
 import { toast } from "sonner"
-import { Plus, Loader2 } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -22,21 +22,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { exerciseSchema, type ExerciseFormData } from "@/lib/validations/exercise"
 import { createExercise, updateExercise } from "@/features/exercises/actions"
+import { exerciseSchema, type ExerciseFormData } from "@/lib/validations/exercise"
 import {
-  MUSCLE_GROUP_LABELS,
-  EXERCISE_CATEGORY_LABELS,
   EQUIPMENT_LABELS,
-  type Exercise,
-  type MuscleGroup,
-  type ExerciseCategory,
+  EXERCISE_CATEGORY_LABELS,
+  MUSCLE_GROUP_LABELS,
   type Equipment,
+  type Exercise,
+  type ExerciseCategory,
+  type MuscleGroup,
 } from "@/types/database.types"
 
 interface Props {
   exercise?: Exercise
-  trigger?: React.ReactElement
+  trigger?: ReactElement
   onSuccess?: () => void
 }
 
@@ -45,22 +45,28 @@ export function ExerciseFormDialog({ exercise, trigger, onSuccess }: Props) {
   const [isPending, startTransition] = useTransition()
   const isEdit = !!exercise
 
-  const { register, control, handleSubmit, reset, setError, formState: { errors } } =
-    useForm<ExerciseFormData>({
-      resolver: zodResolver(exerciseSchema),
-      defaultValues: {
-        name: exercise?.name ?? "",
-        muscle_group: exercise?.muscle_group as MuscleGroup | undefined,
-        category: exercise?.category as ExerciseCategory | undefined,
-        equipment: (exercise?.equipment as Equipment | undefined) ?? undefined,
-        description: exercise?.description ?? "",
-        instructions: exercise?.instructions ?? "",
-      },
-    })
+  const {
+    register,
+    control,
+    handleSubmit,
+    reset,
+    setError,
+    formState: { errors },
+  } = useForm<ExerciseFormData>({
+    resolver: zodResolver(exerciseSchema),
+    defaultValues: {
+      name: exercise?.name ?? "",
+      muscle_group: exercise?.muscle_group as MuscleGroup | undefined,
+      category: exercise?.category as ExerciseCategory | undefined,
+      equipment: (exercise?.equipment as Equipment | undefined) ?? undefined,
+      description: exercise?.description ?? "",
+      instructions: exercise?.instructions ?? "",
+    },
+  })
 
-  function handleOpen(v: boolean) {
-    setOpen(v)
-    if (!v) reset()
+  function handleOpen(value: boolean) {
+    setOpen(value)
+    if (!value) reset()
   }
 
   function onSubmit(data: ExerciseFormData) {
@@ -82,42 +88,53 @@ export function ExerciseFormDialog({ exercise, trigger, onSuccess }: Props) {
         return
       }
 
-      toast.success(isEdit ? "Exercício atualizado!" : "Exercício criado!")
+      toast.success(isEdit ? "Exercicio atualizado!" : "Exercicio criado!")
       handleOpen(false)
       onSuccess?.()
     })
   }
 
-  const muscleGroups = Object.entries(MUSCLE_GROUP_LABELS) as [MuscleGroup, string][]
-  const categories = Object.entries(EXERCISE_CATEGORY_LABELS) as [ExerciseCategory, string][]
+  const muscleGroups = Object.entries(MUSCLE_GROUP_LABELS) as [
+    MuscleGroup,
+    string,
+  ][]
+  const categories = Object.entries(EXERCISE_CATEGORY_LABELS) as [
+    ExerciseCategory,
+    string,
+  ][]
   const equipments = Object.entries(EQUIPMENT_LABELS) as [Equipment, string][]
 
   return (
     <>
       <div onClick={() => setOpen(true)} className="contents">
         {trigger ?? (
-          <Button className="bg-primary hover:bg-[var(--primary-hover)] text-primary-foreground font-semibold cursor-pointer">
+          <Button className="cursor-pointer bg-primary font-semibold text-primary-foreground hover:bg-[var(--primary-hover)]">
             <Plus className="size-4" />
-            Novo Exercício
+            Novo Exercicio
           </Button>
         )}
       </div>
 
       <Dialog open={open} onOpenChange={handleOpen}>
-        <DialogContent className="bg-card border-border max-w-lg">
-          <DialogHeader>
-            <DialogTitle>{isEdit ? "Editar Exercício" : "Novo Exercício"}</DialogTitle>
+        <DialogContent className="fixed inset-x-0 bottom-0 top-auto left-0 max-h-[92svh] w-full max-w-none translate-x-0 translate-y-0 overflow-hidden rounded-b-none rounded-t-2xl border-border bg-card p-0 sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:max-w-lg sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-xl sm:p-4">
+          <DialogHeader className="border-b border-border/60 px-4 pb-3 pt-4 sm:border-0 sm:p-0">
+            <span className="mx-auto mb-1 h-1 w-10 rounded-full bg-muted-foreground/30 sm:hidden" />
+            <DialogTitle>
+              {isEdit ? "Editar Exercicio" : "Novo Exercicio"}
+            </DialogTitle>
           </DialogHeader>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="mt-1 space-y-4 max-h-[70vh] overflow-y-auto pr-1">
-            {/* Nome */}
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="max-h-[calc(92svh-5rem)] space-y-4 overflow-y-auto px-4 pb-4 pt-3 sm:mt-1 sm:max-h-[70vh] sm:px-0 sm:pt-0"
+          >
             <div className="space-y-1.5">
               <Label htmlFor="ex-name">
                 Nome <span className="text-primary">*</span>
               </Label>
               <Input
                 id="ex-name"
-                placeholder="Ex: Supino Reto com Barra"
+                placeholder="Ex: Supino reto com barra"
                 {...register("name")}
                 className={errors.name ? "border-destructive" : ""}
               />
@@ -126,8 +143,7 @@ export function ExerciseFormDialog({ exercise, trigger, onSuccess }: Props) {
               )}
             </div>
 
-            {/* Grupo muscular + Categoria */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <Label>
                   Grupo muscular <span className="text-primary">*</span>
@@ -137,19 +153,23 @@ export function ExerciseFormDialog({ exercise, trigger, onSuccess }: Props) {
                   name="muscle_group"
                   render={({ field }) => (
                     <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger className="w-full h-9">
+                      <SelectTrigger className="h-11 w-full">
                         <SelectValue placeholder="Selecionar..." />
                       </SelectTrigger>
                       <SelectContent>
                         {muscleGroups.map(([value, label]) => (
-                          <SelectItem key={value} value={value}>{label}</SelectItem>
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   )}
                 />
                 {errors.muscle_group && (
-                  <p className="text-xs text-destructive">{errors.muscle_group.message}</p>
+                  <p className="text-xs text-destructive">
+                    {errors.muscle_group.message}
+                  </p>
                 )}
               </div>
 
@@ -162,24 +182,27 @@ export function ExerciseFormDialog({ exercise, trigger, onSuccess }: Props) {
                   name="category"
                   render={({ field }) => (
                     <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger className="w-full h-9">
+                      <SelectTrigger className="h-11 w-full">
                         <SelectValue placeholder="Selecionar..." />
                       </SelectTrigger>
                       <SelectContent>
                         {categories.map(([value, label]) => (
-                          <SelectItem key={value} value={value}>{label}</SelectItem>
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   )}
                 />
                 {errors.category && (
-                  <p className="text-xs text-destructive">{errors.category.message}</p>
+                  <p className="text-xs text-destructive">
+                    {errors.category.message}
+                  </p>
                 )}
               </div>
             </div>
 
-            {/* Equipamento */}
             <div className="space-y-1.5">
               <Label>Equipamento</Label>
               <Controller
@@ -187,12 +210,14 @@ export function ExerciseFormDialog({ exercise, trigger, onSuccess }: Props) {
                 name="equipment"
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="w-full h-9">
+                    <SelectTrigger className="h-11 w-full">
                       <SelectValue placeholder="Nenhum / Sem equipamento" />
                     </SelectTrigger>
                     <SelectContent>
                       {equipments.map(([value, label]) => (
-                        <SelectItem key={value} value={value}>{label}</SelectItem>
+                        <SelectItem key={value} value={value}>
+                          {label}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -200,20 +225,18 @@ export function ExerciseFormDialog({ exercise, trigger, onSuccess }: Props) {
               />
             </div>
 
-            {/* Descrição */}
             <div className="space-y-1.5">
-              <Label htmlFor="ex-desc">Descrição</Label>
+              <Label htmlFor="ex-desc">Descricao</Label>
               <Textarea
                 id="ex-desc"
-                placeholder="Breve descrição do exercício..."
+                placeholder="Breve descricao do exercicio..."
                 rows={2}
                 {...register("description")}
               />
             </div>
 
-            {/* Instruções */}
             <div className="space-y-1.5">
-              <Label htmlFor="ex-instr">Instruções de execução</Label>
+              <Label htmlFor="ex-instr">Instrucoes de execucao</Label>
               <Textarea
                 id="ex-instr"
                 placeholder="Passo a passo de como executar corretamente..."
@@ -222,26 +245,31 @@ export function ExerciseFormDialog({ exercise, trigger, onSuccess }: Props) {
               />
             </div>
 
-            <div className="flex justify-end gap-3 pt-2 border-t border-border">
+            <div className="sticky bottom-0 -mx-4 flex flex-col-reverse gap-2 border-t border-border bg-card/95 p-4 backdrop-blur sm:static sm:mx-0 sm:flex-row sm:justify-end sm:bg-transparent sm:p-0 sm:pt-2 sm:backdrop-blur-none">
               <Button
                 type="button"
                 variant="ghost"
                 onClick={() => handleOpen(false)}
                 disabled={isPending}
+                className="w-full sm:w-auto"
               >
                 Cancelar
               </Button>
               <Button
                 type="submit"
                 disabled={isPending}
-                className="bg-primary hover:bg-[var(--primary-hover)] text-primary-foreground font-semibold min-w-28"
+                className="w-full min-w-28 bg-primary font-semibold text-primary-foreground hover:bg-[var(--primary-hover)] sm:w-auto"
               >
                 {isPending ? (
                   <>
                     <Loader2 className="size-4 animate-spin" />
                     {isEdit ? "Salvando..." : "Criando..."}
                   </>
-                ) : isEdit ? "Salvar" : "Criar Exercício"}
+                ) : isEdit ? (
+                  "Salvar"
+                ) : (
+                  "Criar Exercicio"
+                )}
               </Button>
             </div>
           </form>

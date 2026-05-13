@@ -9,7 +9,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden min-w-0">
         <Header />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 pb-[calc(4rem+env(safe-area-inset-bottom)+1rem)] md:pb-6">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto p-3 md:p-6 pb-[calc(4rem+env(safe-area-inset-bottom)+1rem)] md:pb-6">
           {children}
         </main>
       </div>

@@ -16,6 +16,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
 import { deleteWorkout } from "@/features/workouts/actions"
 import { WORKOUT_STATUS_LABELS } from "@/types/database.types"
 import { getInitials } from "@/lib/utils"
@@ -42,7 +43,7 @@ export function WorkoutCard({ workout }: Props) {
       if (result.error) {
         toast.error("Erro ao excluir treino")
       } else {
-        toast.success("Treino excluído")
+        toast.success("Treino excluido")
         setDeleteOpen(false)
         router.refresh()
       }
@@ -54,72 +55,73 @@ export function WorkoutCard({ workout }: Props) {
 
   return (
     <>
-      <div className="group flex flex-col rounded-xl border border-border bg-card p-4 gap-3 hover:border-border/80 transition-colors">
-        {/* Header */}
+      <div className="group flex flex-col gap-4 rounded-xl border border-border bg-card p-4 transition-colors hover:border-border/80">
         <div className="flex items-start gap-3">
-          <Avatar className="size-9 shrink-0">
+          <Avatar className="size-11 shrink-0 md:size-9">
             <AvatarImage
               src={workout.students?.avatar_url ?? undefined}
               alt={workout.students?.full_name}
             />
-            <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
+            <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold md:text-xs">
               {getInitials(workout.students?.full_name ?? "A")}
             </AvatarFallback>
           </Avatar>
-          <div className="flex-1 min-w-0">
-            <p className="font-semibold text-foreground text-sm truncate">
+
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-base font-semibold text-foreground md:text-sm">
               {workout.name}
             </p>
-            <p className="text-xs text-muted-foreground truncate">
-              {workout.students?.full_name ?? "—"}
+            <p className="truncate text-sm text-muted-foreground md:text-xs">
+              {workout.students?.full_name ?? "-"}
             </p>
           </div>
+
           <span
-            className={`inline-flex items-center rounded-md border px-1.5 py-0.5 text-[11px] font-medium shrink-0 ${statusStyle}`}
+            className={`inline-flex min-h-7 shrink-0 items-center rounded-full border px-2.5 text-xs font-semibold ${statusStyle}`}
           >
             {statusLabel}
           </span>
         </div>
 
-        {/* Section badges */}
         {workout.workout_sections.length > 0 && (
-          <div className="flex gap-1.5">
-            {workout.workout_sections.map(s => (
+          <div className="flex flex-wrap gap-2">
+            {workout.workout_sections.map(section => (
               <span
-                key={s.id}
-                className="inline-flex items-center justify-center size-6 rounded-md bg-muted/40 border border-border text-[11px] font-bold text-muted-foreground"
+                key={section.id}
+                className="inline-flex size-8 items-center justify-center rounded-lg border border-border bg-muted/40 text-sm font-bold text-muted-foreground md:size-6 md:text-[11px]"
               >
-                {s.label}
+                {section.label}
               </span>
             ))}
           </div>
         )}
 
-        {/* Actions */}
-        <div className="flex gap-1.5 mt-auto pt-2 border-t border-border/50">
-          <Link
-            href={`/workouts/${workout.id}`}
-            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md hover:bg-accent"
+        <div className="mt-auto flex gap-2 border-t border-border/50 pt-3">
+          <Button
+            render={<Link href={`/workouts/${workout.id}`} />}
+            variant="outline"
+            className="flex-1 border-border"
           >
-            <Pencil className="size-3" />
+            <Pencil className="size-4" />
             Editar
-          </Link>
-          <button
+          </Button>
+          <Button
+            variant="destructive"
             onClick={() => setDeleteOpen(true)}
-            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors px-2 py-1 rounded-md hover:bg-destructive/10 ml-auto"
+            className="px-3"
+            aria-label={`Excluir treino ${workout.name}`}
           >
-            <Trash2 className="size-3" />
-            Excluir
-          </button>
+            <Trash2 className="size-4" />
+          </Button>
         </div>
       </div>
 
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-        <AlertDialogContent className="bg-card border-border">
+        <AlertDialogContent className="border-border bg-card">
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir &quot;{workout.name}&quot;?</AlertDialogTitle>
             <AlertDialogDescription>
-              O treino e todas as suas seções e exercícios serão removidos
+              O treino e todas as suas secoes e exercicios serao removidos
               permanentemente.
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -128,7 +130,7 @@ export function WorkoutCard({ workout }: Props) {
             <AlertDialogAction
               onClick={handleDelete}
               disabled={isPending}
-              className="bg-destructive hover:bg-destructive/90 text-white"
+              className="bg-destructive text-white hover:bg-destructive/90"
             >
               Excluir
             </AlertDialogAction>

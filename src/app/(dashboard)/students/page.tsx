@@ -1,13 +1,14 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { UserPlus, Users } from "lucide-react"
 import { Suspense } from "react"
-import { Button } from "@/components/ui/button"
-import { PageHeader } from "@/components/shared/page-header"
-import { EmptyState } from "@/components/shared/empty-state"
+import { UserPlus, Users } from "lucide-react"
+import { StudentSearch } from "@/components/students/student-search"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { StudentSearch } from "@/components/students/student-search"
+import { Button } from "@/components/ui/button"
+import { EmptyState } from "@/components/shared/empty-state"
+import { FilterChips } from "@/components/shared/filter-chips"
+import { PageHeader } from "@/components/shared/page-header"
 import { getStudents } from "@/features/students/queries"
 import { getInitials } from "@/lib/utils"
 
@@ -15,6 +16,14 @@ export const metadata: Metadata = { title: "Alunos" }
 
 interface Props {
   searchParams: Promise<{ q?: string; status?: string }>
+}
+
+function studentsHref(params: { q?: string; status?: string }) {
+  const nextParams = new URLSearchParams()
+  if (params.status) nextParams.set("status", params.status)
+  if (params.q) nextParams.set("q", params.q)
+  const queryString = nextParams.toString()
+  return `/students${queryString ? `?${queryString}` : ""}`
 }
 
 export default async function StudentsPage({ searchParams }: Props) {
@@ -26,8 +35,8 @@ export default async function StudentsPage({ searchParams }: Props) {
   })
 
   const totalAll = await getStudents()
-  const totalActive = totalAll.filter((s) => s.is_active).length
-  const totalInactive = totalAll.filter((s) => !s.is_active).length
+  const totalActive = totalAll.filter(student => student.is_active).length
+  const totalInactive = totalAll.filter(student => !student.is_active).length
 
   return (
     <div className="space-y-6">
@@ -37,49 +46,41 @@ export default async function StudentsPage({ searchParams }: Props) {
       >
         <Button
           render={<Link href="/students/new" />}
-          className="bg-primary hover:bg-[var(--primary-hover)] text-primary-foreground font-semibold"
+          className="bg-primary font-semibold text-primary-foreground hover:bg-[var(--primary-hover)]"
         >
           <UserPlus className="size-4" />
           Novo Aluno
         </Button>
       </PageHeader>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+      <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
         <Suspense>
           <StudentSearch defaultValue={q} />
         </Suspense>
 
-        <div className="flex gap-1.5 text-sm">
-          {[
-            { label: "Todos", value: undefined, count: totalAll.length },
-            { label: "Ativos", value: "active", count: totalActive },
-            { label: "Inativos", value: "inactive", count: totalInactive },
-          ].map(({ label, value, count }) => {
-            const isSelected = status === value || (!status && !value)
-            const href = value ? `/students?status=${value}${q ? `&q=${q}` : ""}` : `/students${q ? `?q=${q}` : ""}`
-            return (
-              <Link
-                key={label}
-                href={href}
-                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-                  isSelected
-                    ? "bg-primary/10 text-primary border border-primary/20"
-                    : "text-muted-foreground hover:text-foreground hover:bg-accent border border-transparent"
-                }`}
-              >
-                {label}
-                <span
-                  className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
-                    isSelected ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  {count}
-                </span>
-              </Link>
-            )
-          })}
-        </div>
+        <FilterChips
+          className="w-full sm:w-auto"
+          items={[
+            {
+              label: "Todos",
+              href: studentsHref({ q }),
+              count: totalAll.length,
+              active: !status,
+            },
+            {
+              label: "Ativos",
+              href: studentsHref({ q, status: "active" }),
+              count: totalActive,
+              active: status === "active",
+            },
+            {
+              label: "Inativos",
+              href: studentsHref({ q, status: "inactive" }),
+              count: totalInactive,
+              active: status === "inactive",
+            },
+          ]}
+        />
       </div>
 
       {students.length === 0 ? (
@@ -89,13 +90,13 @@ export default async function StudentsPage({ searchParams }: Props) {
           description={
             q
               ? `Nenhum resultado para "${q}". Tente outro nome.`
-              : "Cadastre seu primeiro aluno para começar a gerenciar treinos."
+              : "Cadastre seu primeiro aluno para comecar a gerenciar treinos."
           }
         >
           {!q && (
             <Button
               render={<Link href="/students/new" />}
-              className="bg-primary hover:bg-[var(--primary-hover)] text-primary-foreground"
+              className="bg-primary text-primary-foreground hover:bg-[var(--primary-hover)]"
             >
               <UserPlus className="size-4" />
               Cadastrar Aluno
@@ -103,41 +104,45 @@ export default async function StudentsPage({ searchParams }: Props) {
           )}
         </EmptyState>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {students.map((student) => (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {students.map(student => (
             <Link
               key={student.id}
               href={`/students/${student.id}`}
-              className="group flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/30 active:scale-[0.98] active:bg-primary/5"
+              className="group flex min-h-[92px] items-center gap-3 rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/30 active:scale-[0.98] active:bg-primary/5"
             >
               <Avatar className="size-12 shrink-0">
-                <AvatarImage src={student.avatar_url ?? undefined} alt={student.full_name} />
-                <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                <AvatarImage
+                  src={student.avatar_url ?? undefined}
+                  alt={student.full_name}
+                />
+                <AvatarFallback className="bg-primary/10 font-semibold text-primary">
                   {getInitials(student.full_name)}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1 min-w-0">
+
+              <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <p className="truncate font-semibold text-foreground group-hover:text-primary transition-colors">
+                  <p className="truncate font-semibold text-foreground transition-colors group-hover:text-primary">
                     {student.full_name}
                   </p>
                   <Badge
                     variant={student.is_active ? "default" : "secondary"}
                     className={
                       student.is_active
-                        ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-xs shrink-0"
-                        : "text-xs shrink-0"
+                        ? "shrink-0 border-emerald-500/20 bg-emerald-500/10 text-emerald-500"
+                        : "shrink-0"
                     }
                   >
                     {student.is_active ? "Ativo" : "Inativo"}
                   </Badge>
                 </div>
-                <p className="mt-0.5 text-xs text-muted-foreground truncate">
+                <p className="mt-0.5 truncate text-xs text-muted-foreground">
                   {student.email ?? student.phone ?? "Sem contato"}
                 </p>
                 {student.goal && (
-                  <p className="mt-1 text-xs text-muted-foreground truncate">
-                    🎯 {student.goal}
+                  <p className="mt-1 truncate text-xs text-muted-foreground">
+                    Objetivo: {student.goal}
                   </p>
                 )}
               </div>

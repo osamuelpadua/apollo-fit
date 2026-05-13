@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Pencil, Trash2, Copy } from "lucide-react"
+import { Copy, Pencil, Trash2 } from "lucide-react"
 import { toast } from "sonner"
 import {
   AlertDialog,
@@ -15,6 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { Button } from "@/components/ui/button"
 import { ApplyTemplateDialog } from "./apply-template-dialog"
 import { deleteTemplate } from "@/features/templates/actions"
 import type { TemplateListItem } from "@/features/templates/queries"
@@ -34,7 +35,7 @@ export function TemplateCard({ template }: Props) {
       if (result.error) {
         toast.error("Erro ao excluir template")
       } else {
-        toast.success("Template excluído")
+        toast.success("Template excluido")
         setDeleteOpen(false)
         router.refresh()
       }
@@ -43,76 +44,75 @@ export function TemplateCard({ template }: Props) {
 
   return (
     <>
-      <div className="group flex flex-col rounded-xl border border-border bg-card p-4 gap-3 hover:border-border/80 transition-colors">
-        {/* Header */}
-        <div className="flex-1 min-w-0">
-          <p className="font-semibold text-foreground text-sm truncate">
+      <div className="group flex flex-col gap-4 rounded-xl border border-border bg-card p-4 transition-colors hover:border-border/80">
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-base font-semibold text-foreground md:text-sm">
             {template.name}
           </p>
           {template.goal && (
-            <p className="mt-0.5 text-xs text-muted-foreground truncate">
+            <p className="mt-0.5 truncate text-sm text-muted-foreground md:text-xs">
               {template.goal}
             </p>
           )}
         </div>
 
-        {/* Description */}
         {template.description && (
-          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+          <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground md:text-xs">
             {template.description}
           </p>
         )}
 
-        {/* Section badges */}
         {template.workout_template_sections.length > 0 && (
-          <div className="flex gap-1.5">
-            {template.workout_template_sections.map(s => (
+          <div className="flex flex-wrap gap-2">
+            {template.workout_template_sections.map(section => (
               <span
-                key={s.id}
-                className="inline-flex items-center justify-center size-6 rounded-md bg-muted/40 border border-border text-[11px] font-bold text-muted-foreground"
+                key={section.id}
+                className="inline-flex size-8 items-center justify-center rounded-lg border border-border bg-muted/40 text-sm font-bold text-muted-foreground md:size-6 md:text-[11px]"
               >
-                {s.label}
+                {section.label}
               </span>
             ))}
           </div>
         )}
 
-        {/* Actions */}
-        <div className="flex gap-1.5 mt-auto pt-2 border-t border-border/50 items-center">
+        <div className="mt-auto flex items-center gap-2 border-t border-border/50 pt-3">
           <ApplyTemplateDialog
             templateId={template.id}
             templateName={template.name}
             trigger={
-              <button className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors px-2 py-1 rounded-md hover:bg-primary/10">
-                <Copy className="size-3" />
+              <Button className="flex-1 bg-primary font-semibold text-primary-foreground hover:bg-[var(--primary-hover)]">
+                <Copy className="size-4" />
                 Aplicar
-              </button>
+              </Button>
             }
           />
-          <Link
-            href={`/templates/${template.id}`}
-            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-md hover:bg-accent"
+          <Button
+            render={<Link href={`/templates/${template.id}`} />}
+            variant="outline"
+            className="border-border px-3"
+            aria-label={`Editar template ${template.name}`}
           >
-            <Pencil className="size-3" />
-            Editar
-          </Link>
-          <button
+            <Pencil className="size-4" />
+            <span className="sr-only sm:not-sr-only">Editar</span>
+          </Button>
+          <Button
+            variant="destructive"
             onClick={() => setDeleteOpen(true)}
-            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors px-2 py-1 rounded-md hover:bg-destructive/10 ml-auto"
+            className="px-3"
+            aria-label={`Excluir template ${template.name}`}
           >
-            <Trash2 className="size-3" />
-            Excluir
-          </button>
+            <Trash2 className="size-4" />
+          </Button>
         </div>
       </div>
 
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-        <AlertDialogContent className="bg-card border-border">
+        <AlertDialogContent className="border-border bg-card">
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir &quot;{template.name}&quot;?</AlertDialogTitle>
             <AlertDialogDescription>
-              O template e todas as suas seções serão removidos. Treinos já
-              criados a partir dele não serão afetados.
+              O template e todas as suas secoes serao removidos. Treinos ja
+              criados a partir dele nao serao afetados.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -120,7 +120,7 @@ export function TemplateCard({ template }: Props) {
             <AlertDialogAction
               onClick={handleDelete}
               disabled={isPending}
-              className="bg-destructive hover:bg-destructive/90 text-white"
+              className="bg-destructive text-white hover:bg-destructive/90"
             >
               Excluir
             </AlertDialogAction>

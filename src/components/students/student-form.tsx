@@ -1,18 +1,14 @@
 "use client"
 
 import { useTransition } from "react"
-import { useRouter } from "next/navigation"
-import { useForm, Controller } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
-import { studentSchema, type StudentFormData } from "@/lib/validations/student"
-import { createStudent, updateStudent } from "@/features/students/actions"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
 import {
   Select,
   SelectContent,
@@ -20,6 +16,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Switch } from "@/components/ui/switch"
+import { Textarea } from "@/components/ui/textarea"
+import { createStudent, updateStudent } from "@/features/students/actions"
+import { studentSchema, type StudentFormData } from "@/lib/validations/student"
 
 interface Props {
   mode: "create" | "edit"
@@ -67,12 +67,14 @@ export function StudentForm({ mode, studentId, initialData }: Props) {
               message: Array.isArray(msgs) ? msgs[0] : String(msgs),
             })
           })
-          toast.error("Verifique os campos do formulário")
+          toast.error("Verifique os campos do formulario")
         }
         return
       }
 
-      toast.success(mode === "create" ? "Aluno cadastrado!" : "Alterações salvas!")
+      toast.success(
+        mode === "create" ? "Aluno cadastrado!" : "Alteracoes salvas!"
+      )
 
       if (mode === "create" && result.data) {
         router.push(`/students/${result.data.id}`)
@@ -84,24 +86,27 @@ export function StudentForm({ mode, studentId, initialData }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Informações pessoais */}
-      <div className="rounded-xl border border-border bg-card p-6 space-y-5">
-        <h3 className="text-sm font-semibold text-foreground">Informações Pessoais</h3>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 md:space-y-6">
+      <div className="space-y-5 rounded-xl border border-border bg-card p-4 md:p-6">
+        <h3 className="text-base font-semibold text-foreground md:text-sm">
+          Informacoes pessoais
+        </h3>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <div className="sm:col-span-2 space-y-1.5">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div className="space-y-1.5 sm:col-span-2">
             <Label htmlFor="full_name">
               Nome completo <span className="text-primary">*</span>
             </Label>
             <Input
               id="full_name"
-              placeholder="Ex: João Silva"
+              placeholder="Ex: Joao Silva"
               {...register("full_name")}
               className={errors.full_name ? "border-destructive" : ""}
             />
             {errors.full_name && (
-              <p className="text-xs text-destructive">{errors.full_name.message}</p>
+              <p className="text-xs text-destructive">
+                {errors.full_name.message}
+              </p>
             )}
           </div>
 
@@ -139,13 +144,13 @@ export function StudentForm({ mode, studentId, initialData }: Props) {
           </div>
 
           <div className="space-y-1.5">
-            <Label>Gênero</Label>
+            <Label>Genero</Label>
             <Controller
               control={control}
               name="gender"
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger className="w-full h-9">
+                  <SelectTrigger className="h-11 w-full">
                     <SelectValue placeholder="Selecionar..." />
                   </SelectTrigger>
                   <SelectContent>
@@ -160,9 +165,10 @@ export function StudentForm({ mode, studentId, initialData }: Props) {
         </div>
       </div>
 
-      {/* Objetivo e notas */}
-      <div className="rounded-xl border border-border bg-card p-6 space-y-5">
-        <h3 className="text-sm font-semibold text-foreground">Objetivo e Observações</h3>
+      <div className="space-y-5 rounded-xl border border-border bg-card p-4 md:p-6">
+        <h3 className="text-base font-semibold text-foreground md:text-sm">
+          Objetivo e observacoes
+        </h3>
 
         <div className="space-y-1.5">
           <Label htmlFor="goal">Objetivo</Label>
@@ -175,23 +181,22 @@ export function StudentForm({ mode, studentId, initialData }: Props) {
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="notes">Observações / Anamnese</Label>
+          <Label htmlFor="notes">Observacoes / Anamnese</Label>
           <Textarea
             id="notes"
-            placeholder="Lesões, restrições, histórico relevante..."
+            placeholder="Lesoes, restricoes, historico relevante..."
             rows={4}
             {...register("notes")}
           />
         </div>
       </div>
 
-      {/* Status */}
-      <div className="rounded-xl border border-border bg-card p-5">
-        <div className="flex items-center justify-between">
-          <div>
+      <div className="rounded-xl border border-border bg-card p-4 md:p-5">
+        <div className="flex items-center justify-between gap-4">
+          <div className="min-w-0">
             <p className="text-sm font-semibold text-foreground">Aluno ativo</p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Alunos inativos não aparecem nas estatísticas do dashboard
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Alunos inativos nao aparecem nas estatisticas do dashboard
             </p>
           </div>
           <Controller
@@ -204,20 +209,20 @@ export function StudentForm({ mode, studentId, initialData }: Props) {
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="flex gap-3 justify-end">
+      <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-3">
         <Button
           type="button"
           variant="ghost"
           onClick={() => router.back()}
           disabled={isPending}
+          className="w-full sm:w-auto"
         >
           Cancelar
         </Button>
         <Button
           type="submit"
           disabled={isPending}
-          className="bg-primary hover:bg-[var(--primary-hover)] text-primary-foreground font-semibold min-w-36"
+          className="w-full min-w-36 bg-primary font-semibold text-primary-foreground hover:bg-[var(--primary-hover)] sm:w-auto"
         >
           {isPending ? (
             <>
@@ -227,7 +232,7 @@ export function StudentForm({ mode, studentId, initialData }: Props) {
           ) : mode === "create" ? (
             "Cadastrar Aluno"
           ) : (
-            "Salvar Alterações"
+            "Salvar Alteracoes"
           )}
         </Button>
       </div>

@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useMemo } from "react"
-import { Search, Plus, Loader2 } from "lucide-react"
+import { useMemo, useState } from "react"
+import { Loader2, Plus, Search } from "lucide-react"
 import { toast } from "sonner"
 import {
   Dialog,
@@ -10,8 +10,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { getExercises } from "@/features/exercises/queries"
-import { addWorkoutExercise, type AddedExercise } from "@/features/workouts/actions"
-import { MUSCLE_GROUP_LABELS, type MuscleGroup, type Exercise } from "@/types/database.types"
+import {
+  addWorkoutExercise,
+  type AddedExercise,
+} from "@/features/workouts/actions"
+import {
+  MUSCLE_GROUP_LABELS,
+  type Exercise,
+  type MuscleGroup,
+} from "@/types/database.types"
 import type { ExRow } from "./builder-exercise-row"
 
 interface Props {
@@ -46,10 +53,10 @@ export function ExercisePickerDialog({ sectionId, onAdd }: Props) {
 
   const filtered = useMemo(
     () =>
-      exercises.filter(ex => {
+      exercises.filter(exercise => {
         const matchSearch =
-          !search || ex.name.toLowerCase().includes(search.toLowerCase())
-        const matchMuscle = !muscle || ex.muscle_group === muscle
+          !search || exercise.name.toLowerCase().includes(search.toLowerCase())
+        const matchMuscle = !muscle || exercise.muscle_group === muscle
         return matchSearch && matchMuscle
       }),
     [exercises, search, muscle]
@@ -60,22 +67,25 @@ export function ExercisePickerDialog({ sectionId, onAdd }: Props) {
     try {
       const result = await addWorkoutExercise(sectionId, exercise.id)
       if ("error" in result) {
-        toast.error("Erro ao adicionar exercício")
+        toast.error("Erro ao adicionar exercicio")
         return
       }
-      const d: AddedExercise = result.data
+
+      const addedExercise: AddedExercise = result.data
       const row: ExRow = {
-        id: d.id,
-        exercise_id: d.exercise_id,
-        sort_order: d.sort_order,
-        sets: d.sets,
-        reps: d.reps,
-        load: d.load ?? null,
-        rest_seconds: d.rest_seconds,
-        notes: d.notes ?? null,
-        exerciseName: d.exercises?.name ?? exercise.name,
-        exerciseMuscle: d.exercises?.muscle_group ?? exercise.muscle_group,
+        id: addedExercise.id,
+        exercise_id: addedExercise.exercise_id,
+        sort_order: addedExercise.sort_order,
+        sets: addedExercise.sets,
+        reps: addedExercise.reps,
+        load: addedExercise.load ?? null,
+        rest_seconds: addedExercise.rest_seconds,
+        notes: addedExercise.notes ?? null,
+        exerciseName: addedExercise.exercises?.name ?? exercise.name,
+        exerciseMuscle:
+          addedExercise.exercises?.muscle_group ?? exercise.muscle_group,
       }
+
       onAdd(exercise.id, row)
       setSearch("")
       setMuscle("")
@@ -85,45 +95,50 @@ export function ExercisePickerDialog({ sectionId, onAdd }: Props) {
     }
   }
 
-  const muscleGroups = Object.entries(MUSCLE_GROUP_LABELS) as [MuscleGroup, string][]
+  const muscleGroups = Object.entries(MUSCLE_GROUP_LABELS) as [
+    MuscleGroup,
+    string,
+  ][]
 
   return (
     <>
       <button
         onClick={() => setOpen(true)}
-        className="w-full flex items-center justify-center gap-1.5 rounded-lg border border-dashed border-border/50 py-2.5 text-xs text-muted-foreground/60 hover:text-primary hover:border-primary/40 transition-colors"
+        className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border/60 py-3 text-sm font-semibold text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
       >
-        <Plus className="size-3.5" />
-        Adicionar exercício
+        <Plus className="size-4" />
+        Adicionar exercicio
       </button>
 
       <Dialog open={open} onOpenChange={handleOpen}>
-        <DialogContent className="bg-card border-border max-w-2xl flex flex-col gap-0 p-0 overflow-hidden" style={{ maxHeight: "85vh" }}>
-          <DialogHeader className="px-5 pt-5 pb-4 border-b border-border/50">
-            <DialogTitle>Adicionar Exercício</DialogTitle>
+        <DialogContent
+          className="fixed inset-x-0 bottom-0 top-auto left-0 flex max-h-[88svh] max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-hidden rounded-b-none rounded-t-2xl border-border bg-card p-0 sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:max-w-2xl sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-xl"
+          style={{ maxHeight: "88svh" }}
+        >
+          <DialogHeader className="border-b border-border/50 px-5 pb-4 pt-5">
+            <span className="mx-auto mb-1 h-1 w-10 rounded-full bg-muted-foreground/30 sm:hidden" />
+            <DialogTitle>Adicionar Exercicio</DialogTitle>
           </DialogHeader>
 
-          <div className="px-5 pt-4 space-y-3">
-            {/* Search */}
+          <div className="space-y-3 border-b border-border/40 px-4 py-4 sm:px-5">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="text"
                 value={search}
-                onChange={e => setSearch(e.target.value)}
-                placeholder="Buscar exercício..."
+                onChange={event => setSearch(event.target.value)}
+                placeholder="Buscar exercicio..."
                 autoFocus
-                className="w-full h-9 pl-9 pr-3 rounded-lg border border-border bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
+                className="h-11 w-full rounded-lg border border-border bg-input/30 pl-9 pr-3 text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 sm:h-9 sm:text-sm"
               />
             </div>
 
-            {/* Muscle pills */}
-            <div className="flex gap-1.5 overflow-x-auto pb-1">
+            <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
               <button
                 onClick={() => setMuscle("")}
-                className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs border transition-colors ${
+                className={`min-h-10 shrink-0 rounded-full border px-4 text-sm font-medium transition-colors sm:min-h-8 sm:px-3 sm:text-xs ${
                   !muscle
-                    ? "bg-primary/10 text-primary border-primary/20"
+                    ? "border-primary/20 bg-primary/10 text-primary"
                     : "border-border text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -132,10 +147,14 @@ export function ExercisePickerDialog({ sectionId, onAdd }: Props) {
               {muscleGroups.map(([value, label]) => (
                 <button
                   key={value}
-                  onClick={() => setMuscle(v => (v === value ? "" : value))}
-                  className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs border transition-colors ${
+                  onClick={() =>
+                    setMuscle(currentValue =>
+                      currentValue === value ? "" : value
+                    )
+                  }
+                  className={`min-h-10 shrink-0 rounded-full border px-4 text-sm font-medium transition-colors sm:min-h-8 sm:px-3 sm:text-xs ${
                     muscle === value
-                      ? "bg-primary/10 text-primary border-primary/20"
+                      ? "border-primary/20 bg-primary/10 text-primary"
                       : "border-border text-muted-foreground hover:text-foreground"
                   }`}
                 >
@@ -145,45 +164,46 @@ export function ExercisePickerDialog({ sectionId, onAdd }: Props) {
             </div>
           </div>
 
-          {/* Exercise list */}
-          <div className="flex-1 overflow-y-auto px-5 py-3 space-y-1 min-h-0" style={{ maxHeight: "50vh" }}>
+          <div className="min-h-0 flex-1 space-y-2 overflow-y-auto px-4 py-3 sm:px-5">
             {loading ? (
               <div className="flex items-center justify-center py-10">
                 <Loader2 className="size-5 animate-spin text-muted-foreground" />
               </div>
             ) : filtered.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-8">
-                Nenhum exercício encontrado
+              <p className="py-8 text-center text-sm text-muted-foreground">
+                Nenhum exercicio encontrado
               </p>
             ) : (
-              filtered.map(ex => (
+              filtered.map(exercise => (
                 <button
-                  key={ex.id}
-                  onClick={() => handleAdd(ex)}
+                  key={exercise.id}
+                  onClick={() => handleAdd(exercise)}
                   disabled={!!adding}
-                  className="w-full flex items-center gap-3 rounded-lg border border-border/40 bg-card/40 px-3 py-2 text-left hover:border-primary/30 hover:bg-primary/5 transition-colors disabled:pointer-events-none"
+                  className="flex min-h-16 w-full items-center gap-3 rounded-xl border border-border/50 bg-card/40 px-3 py-3 text-left transition-colors hover:border-primary/30 hover:bg-primary/5 disabled:pointer-events-none sm:min-h-12 sm:rounded-lg sm:py-2"
                 >
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">
-                      {ex.name}
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-foreground">
+                      {exercise.name}
                     </p>
-                    <p className="text-xs text-muted-foreground">
-                      {MUSCLE_GROUP_LABELS[ex.muscle_group as MuscleGroup]}
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {MUSCLE_GROUP_LABELS[exercise.muscle_group as MuscleGroup]}
                     </p>
                   </div>
-                  {adding === ex.id ? (
-                    <Loader2 className="size-4 animate-spin text-primary shrink-0" />
+                  {adding === exercise.id ? (
+                    <Loader2 className="size-5 shrink-0 animate-spin text-primary sm:size-4" />
                   ) : (
-                    <Plus className="size-4 text-muted-foreground/40 shrink-0" />
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary sm:size-8">
+                      <Plus className="size-4" />
+                    </span>
                   )}
                 </button>
               ))
             )}
           </div>
 
-          <div className="px-5 py-3 border-t border-border/50 bg-muted/20">
-            <p className="text-xs text-muted-foreground text-center">
-              {filtered.length} exercício{filtered.length !== 1 ? "s" : ""}
+          <div className="border-t border-border/50 bg-muted/20 px-5 py-3">
+            <p className="text-center text-xs text-muted-foreground">
+              {filtered.length} exercicio{filtered.length !== 1 ? "s" : ""}
             </p>
           </div>
         </DialogContent>

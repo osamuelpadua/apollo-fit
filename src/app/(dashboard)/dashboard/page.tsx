@@ -1,28 +1,54 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { Users, ClipboardList, TrendingUp, UserPlus, ChevronRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import {
+  ChevronRight,
+  ClipboardList,
+  TrendingUp,
+  UserPlus,
+  Users,
+} from "lucide-react"
 import { StatsCard } from "@/components/dashboard/stats-card"
 import { RecentStudentsList } from "@/components/dashboard/recent-students-list"
-import { getDashboardStats, getRecentStudents } from "@/features/students/queries"
+import { Button } from "@/components/ui/button"
 import { getProfile } from "@/features/auth/actions"
+import { getDashboardStats, getRecentStudents } from "@/features/students/queries"
 
 export const metadata: Metadata = {
   title: "Dashboard",
 }
 
 function getGreeting() {
-  const h = new Date().getHours()
-  if (h < 12) return "Bom dia"
-  if (h < 18) return "Boa tarde"
+  const hour = new Date().getHours()
+  if (hour < 12) return "Bom dia"
+  if (hour < 18) return "Boa tarde"
   return "Boa noite"
 }
 
 const QUICK_ACTIONS = [
-  { title: "Novo Aluno",       desc: "Cadastrar aluno",       href: "/students/new",   icon: UserPlus    },
-  { title: "Criar Treino",     desc: "Novo programa",         href: "/workouts/new",   icon: ClipboardList },
-  { title: "Exercícios",       desc: "Ver biblioteca",        href: "/exercises",      icon: TrendingUp  },
-  { title: "Ver Alunos",       desc: "Lista completa",        href: "/students",       icon: Users       },
+  {
+    title: "Novo Aluno",
+    desc: "Cadastrar aluno",
+    href: "/students/new",
+    icon: UserPlus,
+  },
+  {
+    title: "Criar Treino",
+    desc: "Novo programa",
+    href: "/workouts/new",
+    icon: ClipboardList,
+  },
+  {
+    title: "Exercicios",
+    desc: "Ver biblioteca",
+    href: "/exercises",
+    icon: TrendingUp,
+  },
+  {
+    title: "Ver Alunos",
+    desc: "Lista completa",
+    href: "/students",
+    icon: Users,
+  },
 ]
 
 export default async function DashboardPage() {
@@ -36,29 +62,28 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-5">
-      {/* Greeting — mobile only */}
       <div className="md:hidden">
         <p className="text-xs text-muted-foreground">{getGreeting()},</p>
-        <h1 className="text-xl font-bold text-foreground">{firstName} 💪</h1>
+        <h1 className="text-xl font-bold text-foreground">{firstName}</h1>
       </div>
 
-      {/* Desktop page header */}
-      <div className="hidden md:flex items-center justify-between">
+      <div className="hidden items-center justify-between md:flex">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-          <p className="text-sm text-muted-foreground">Visão geral do seu studio</p>
+          <p className="text-sm text-muted-foreground">
+            Visao geral do seu studio
+          </p>
         </div>
         <Button
           render={<Link href="/students/new" />}
-          className="bg-primary hover:bg-[var(--primary-hover)] text-primary-foreground font-semibold"
+          className="bg-primary font-semibold text-primary-foreground hover:bg-[var(--primary-hover)]"
         >
           <UserPlus className="size-4" />
           Novo Aluno
         </Button>
       </div>
 
-      {/* Stats grid — 2x2 no mobile, 4 cols no desktop */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <StatsCard
           title="Ativos"
           value={stats.activeStudents}
@@ -73,7 +98,7 @@ export default async function DashboardPage() {
           icon={ClipboardList}
         />
         <StatsCard
-          title="Este mês"
+          title="Este mes"
           value={stats.newStudentsThisMonth}
           description="Novos alunos"
           icon={TrendingUp}
@@ -86,36 +111,40 @@ export default async function DashboardPage() {
         />
       </div>
 
-      {/* Quick actions — scroll horizontal no mobile */}
-      <div className="-mx-4 md:mx-0 px-4 md:px-0">
-        <div className="flex gap-3 overflow-x-auto pb-1 md:grid md:grid-cols-4 md:overflow-visible scrollbar-none">
-          {QUICK_ACTIONS.map((action) => (
+      <div className="-mx-3 px-3 md:mx-0 md:px-0">
+        <div className="scrollbar-none flex gap-3 overflow-x-auto pb-1 md:grid md:grid-cols-4 md:overflow-visible">
+          {QUICK_ACTIONS.map(action => (
             <Link
               key={action.href}
               href={action.href}
-              className="flex-shrink-0 w-36 md:w-auto flex flex-col items-start gap-3 rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/30 hover:bg-primary/5 active:scale-[0.97] active:bg-primary/10"
+              className="flex min-h-[116px] w-40 flex-shrink-0 flex-col items-start gap-3 rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/30 hover:bg-primary/5 active:scale-[0.97] active:bg-primary/10 md:w-auto"
             >
-              <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10">
-                <action.icon className="size-4 text-primary" />
+              <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10">
+                <action.icon className="size-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground leading-tight">{action.title}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">{action.desc}</p>
+                <p className="text-sm font-semibold leading-tight text-foreground">
+                  {action.title}
+                </p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  {action.desc}
+                </p>
               </div>
             </Link>
           ))}
         </div>
       </div>
 
-      {/* Recent students */}
-      <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-border">
-          <p className="text-sm font-semibold text-foreground">Alunos Recentes</p>
+      <div className="overflow-hidden rounded-xl border border-border bg-card">
+        <div className="flex items-center justify-between border-b border-border px-4 py-3.5 md:px-5">
+          <p className="text-sm font-semibold text-foreground">
+            Alunos Recentes
+          </p>
           <Button
             render={<Link href="/students" />}
             variant="ghost"
             size="sm"
-            className="text-primary hover:text-primary hover:bg-primary/10 text-xs font-medium h-8 px-3 gap-1"
+            className="gap-1 text-primary hover:bg-primary/10 hover:text-primary"
           >
             Ver todos
             <ChevronRight className="size-3.5" />
