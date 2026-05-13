@@ -27,6 +27,11 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: "#0F0F10",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
 }
 
 export default function RootLayout({
@@ -44,7 +49,7 @@ export default function RootLayout({
         <QueryProvider>
           {children}
           <Toaster
-            position="bottom-right"
+            position="top-center"
             toastOptions={{
               style: {
                 background: "oklch(0.14 0 0)",
