@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import { TemplateBuilder } from "@/components/templates/template-builder"
+import { getExercises } from "@/features/exercises/queries"
 import { getTemplateById } from "@/features/templates/queries"
 
 interface Props {
@@ -27,5 +28,7 @@ export default async function TemplatePage({ params }: Props) {
     notFound()
   }
 
-  return <TemplateBuilder template={template} />
+  const exercises = await getExercises()
+
+  return <TemplateBuilder template={template} exercises={exercises} />
 }

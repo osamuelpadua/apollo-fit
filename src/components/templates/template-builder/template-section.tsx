@@ -8,6 +8,7 @@ import {
   deleteTemplateSection,
   updateTemplateSection,
 } from "@/features/templates/actions"
+import type { Exercise } from "@/types/database.types"
 import { TemplateExercisePicker } from "./exercise-picker-dialog"
 import { TemplateExerciseRow, type TExRow } from "./template-exercise-row"
 
@@ -34,6 +35,7 @@ interface Props {
   onDelete: (id: string) => void
   onExerciseAdd: (sectionId: string, exerciseId: string, row: TExRow) => void
   onExerciseDelete: (sectionId: string, exerciseId: string) => void
+  exercises: Exercise[]
 }
 
 export function TemplateSection({
@@ -41,6 +43,7 @@ export function TemplateSection({
   onDelete,
   onExerciseAdd,
   onExerciseDelete,
+  exercises,
 }: Props) {
   const [title, setTitle] = useState(section.title ?? "")
   const [isDeleting, setIsDeleting] = useState(false)
@@ -117,6 +120,7 @@ export function TemplateSection({
 
         <TemplateExercisePicker
           sectionId={section.id}
+          exercises={exercises}
           onAdd={(exerciseId, row) => onExerciseAdd(section.id, exerciseId, row)}
         />
       </div>

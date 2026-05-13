@@ -5,6 +5,7 @@ import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { Trash2 } from "lucide-react"
 import { toast } from "sonner"
 import { deleteSection, updateSection } from "@/features/workouts/actions"
+import type { Exercise } from "@/types/database.types"
 import { BuilderExerciseRow, type ExRow } from "./builder-exercise-row"
 import { ExercisePickerDialog } from "./exercise-picker-dialog"
 
@@ -31,6 +32,7 @@ interface Props {
   onDelete: (id: string) => void
   onExerciseAdd: (sectionId: string, exerciseId: string, row: ExRow) => void
   onExerciseDelete: (sectionId: string, exerciseId: string) => void
+  exercises: Exercise[]
 }
 
 export function BuilderSection({
@@ -38,6 +40,7 @@ export function BuilderSection({
   onDelete,
   onExerciseAdd,
   onExerciseDelete,
+  exercises,
 }: Props) {
   const [title, setTitle] = useState(section.title ?? "")
   const [isDeleting, setIsDeleting] = useState(false)
@@ -114,6 +117,7 @@ export function BuilderSection({
 
         <ExercisePickerDialog
           sectionId={section.id}
+          exercises={exercises}
           onAdd={(exerciseId, row) => onExerciseAdd(section.id, exerciseId, row)}
         />
       </div>

@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
+import { GoalSelect } from "@/components/shared/goal-select"
 import { createStudent, updateStudent } from "@/features/students/actions"
 import { studentSchema, type StudentFormData } from "@/lib/validations/student"
 
@@ -171,12 +172,16 @@ export function StudentForm({ mode, studentId, initialData }: Props) {
         </h3>
 
         <div className="space-y-1.5">
-          <Label htmlFor="goal">Objetivo</Label>
-          <Textarea
-            id="goal"
-            placeholder="Ex: Hipertrofia, perda de peso, condicionamento..."
-            rows={2}
-            {...register("goal")}
+          <Label>Objetivo</Label>
+          <Controller
+            control={control}
+            name="goal"
+            render={({ field }) => (
+              <GoalSelect
+                value={field.value}
+                onValueChange={field.onChange}
+              />
+            )}
           />
         </div>
 

@@ -21,14 +21,16 @@ import {
   updateWorkout,
 } from "@/features/workouts/actions"
 import type { WorkoutDetail } from "@/features/workouts/queries"
+import type { Exercise } from "@/types/database.types"
 import { BuilderSection, type SectionState } from "./builder-section"
 import type { ExRow } from "./builder-exercise-row"
 
 interface Props {
   workout: WorkoutDetail
+  exercises: Exercise[]
 }
 
-export function WorkoutBuilder({ workout }: Props) {
+export function WorkoutBuilder({ workout, exercises }: Props) {
   const [workoutName, setWorkoutName] = useState(workout.name)
   const [sections, setSections] = useState<SectionState[]>(() =>
     workout.workout_sections.map(section => ({
@@ -200,6 +202,7 @@ export function WorkoutBuilder({ workout }: Props) {
               onDelete={handleSectionDelete}
               onExerciseAdd={handleExerciseAdd}
               onExerciseDelete={handleExerciseDelete}
+              exercises={exercises}
             />
           ))}
         </div>

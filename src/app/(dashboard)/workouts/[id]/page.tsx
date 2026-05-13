@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import { WorkoutBuilder } from "@/components/workouts/workout-builder"
+import { getExercises } from "@/features/exercises/queries"
 import { getWorkoutById } from "@/features/workouts/queries"
 
 interface Props {
@@ -27,5 +28,7 @@ export default async function WorkoutPage({ params }: Props) {
     notFound()
   }
 
-  return <WorkoutBuilder workout={workout} />
+  const exercises = await getExercises()
+
+  return <WorkoutBuilder workout={workout} exercises={exercises} />
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import { useTransition } from "react"
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
@@ -9,6 +9,7 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { GoalSelect } from "@/components/shared/goal-select"
 import { Textarea } from "@/components/ui/textarea"
 import { createTemplate } from "@/features/templates/actions"
 import { templateSchema, type TemplateFormData } from "@/lib/validations/template"
@@ -19,6 +20,7 @@ export function NewTemplateForm() {
 
   const {
     register,
+    control,
     handleSubmit,
     setError,
     formState: { errors },
@@ -66,11 +68,16 @@ export function NewTemplateForm() {
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="tpl-goal">Objetivo</Label>
-        <Input
-          id="tpl-goal"
-          placeholder="Ex: Hipertrofia, emagrecimento..."
-          {...register("goal")}
+        <Label>Objetivo</Label>
+        <Controller
+          control={control}
+          name="goal"
+          render={({ field }) => (
+            <GoalSelect
+              value={field.value}
+              onValueChange={field.onChange}
+            />
+          )}
         />
       </div>
 

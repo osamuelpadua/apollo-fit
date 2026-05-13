@@ -35,13 +35,14 @@ export async function getProgressPhotos(studentId: string): Promise<ProgressPhot
 
   return Promise.all(
     photos.map(async photo => {
-      if (photo.public_url) {
-        return { ...photo, display_url: photo.public_url }
-      }
       const { data: signed } = await supabase.storage
         .from("progress")
         .createSignedUrl(photo.storage_path, 3600)
-      return { ...photo, display_url: signed?.signedUrl ?? null }
+
+      return {
+        ...photo,
+        display_url: signed?.signedUrl ?? photo.public_url ?? null,
+      }
     })
   )
 }

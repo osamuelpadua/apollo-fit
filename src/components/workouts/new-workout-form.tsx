@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select"
 import { createWorkout } from "@/features/workouts/actions"
 import { workoutSchema, type WorkoutFormData } from "@/lib/validations/workout"
+import { GoalSelect } from "@/components/shared/goal-select"
 
 interface Props {
   students: { id: string; full_name: string }[]
@@ -115,11 +116,16 @@ export function NewWorkoutForm({ students }: Props) {
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="workout-goal">Objetivo</Label>
-        <Input
-          id="workout-goal"
-          placeholder="Ex: Hipertrofia, definicao..."
-          {...register("goal")}
+        <Label>Objetivo</Label>
+        <Controller
+          control={control}
+          name="goal"
+          render={({ field }) => (
+            <GoalSelect
+              value={field.value}
+              onValueChange={field.onChange}
+            />
+          )}
         />
       </div>
 

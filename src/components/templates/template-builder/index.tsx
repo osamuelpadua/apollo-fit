@@ -22,14 +22,16 @@ import {
   updateTemplate,
 } from "@/features/templates/actions"
 import type { TemplateDetail } from "@/features/templates/queries"
+import type { Exercise } from "@/types/database.types"
 import type { TExRow } from "./template-exercise-row"
 import { TemplateSection, type TSectionState } from "./template-section"
 
 interface Props {
   template: TemplateDetail
+  exercises: Exercise[]
 }
 
-export function TemplateBuilder({ template }: Props) {
+export function TemplateBuilder({ template, exercises }: Props) {
   const [templateName, setTemplateName] = useState(template.name)
   const [sections, setSections] = useState<TSectionState[]>(() =>
     template.workout_template_sections.map(section => ({
@@ -209,6 +211,7 @@ export function TemplateBuilder({ template }: Props) {
               onDelete={handleSectionDelete}
               onExerciseAdd={handleExerciseAdd}
               onExerciseDelete={handleExerciseDelete}
+              exercises={exercises}
             />
           ))}
         </div>

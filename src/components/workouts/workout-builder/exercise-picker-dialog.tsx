@@ -9,7 +9,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { getExercises } from "@/features/exercises/queries"
 import {
   addWorkoutExercise,
   type AddedExercise,
@@ -23,33 +22,15 @@ import type { ExRow } from "./builder-exercise-row"
 
 interface Props {
   sectionId: string
+  exercises: Exercise[]
   onAdd: (exerciseId: string, row: ExRow) => void
 }
 
-export function ExercisePickerDialog({ sectionId, onAdd }: Props) {
+export function ExercisePickerDialog({ sectionId, exercises, onAdd }: Props) {
   const [open, setOpen] = useState(false)
-  const [exercises, setExercises] = useState<Exercise[]>([])
-  const [loading, setLoading] = useState(false)
   const [search, setSearch] = useState("")
   const [muscle, setMuscle] = useState<MuscleGroup | "">("")
   const [adding, setAdding] = useState<string | null>(null)
-
-  async function loadExercises() {
-    setLoading(true)
-    try {
-      const nextExercises = await getExercises()
-      setExercises(nextExercises)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  function handleOpen(nextOpen: boolean) {
-    setOpen(nextOpen)
-    if (nextOpen && exercises.length === 0) {
-      void loadExercises()
-    }
-  }
 
   const filtered = useMemo(
     () =>
@@ -110,7 +91,7 @@ export function ExercisePickerDialog({ sectionId, onAdd }: Props) {
         Adicionar exercicio
       </button>
 
-      <Dialog open={open} onOpenChange={handleOpen}>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
           className="fixed inset-x-0 bottom-0 top-auto left-0 flex max-h-[88svh] max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-hidden rounded-b-none rounded-t-2xl border-border bg-card p-0 sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:max-w-2xl sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-xl"
           style={{ maxHeight: "88svh" }}
@@ -133,45 +114,26 @@ export function ExercisePickerDialog({ sectionId, onAdd }: Props) {
               />
             </div>
 
-            <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
-              <button
-                onClick={() => setMuscle("")}
-                className={`min-h-10 shrink-0 rounded-full border px-4 text-sm font-medium transition-colors sm:min-h-8 sm:px-3 sm:text-xs ${
-                  !muscle
-                    ? "border-primary/20 bg-primary/10 text-primary"
-                    : "border-border text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Todos
-              </button>
+            <select
+              value={muscle}
+              onChange={event => setMuscle(event.target.value as MuscleGroup | "")}
+              className="h-11 w-full rounded-lg border border-border bg-input/30 px-3 text-base text-foreground outline-none focus:border-primary/50 sm:h-9 sm:text-sm"
+            >
+              <option value="">Todos os grupos musculares</option>
               {muscleGroups.map(([value, label]) => (
-                <button
-                  key={value}
-                  onClick={() =>
-                    setMuscle(currentValue =>
-                      currentValue === value ? "" : value
-                    )
-                  }
-                  className={`min-h-10 shrink-0 rounded-full border px-4 text-sm font-medium transition-colors sm:min-h-8 sm:px-3 sm:text-xs ${
-                    muscle === value
-                      ? "border-primary/20 bg-primary/10 text-primary"
-                      : "border-border text-muted-foreground hover:text-foreground"
-                  }`}
-                >
+                <option key={value} value={value}>
                   {label}
-                </button>
+                </option>
               ))}
-            </div>
+            </select>
           </div>
 
           <div className="min-h-0 flex-1 space-y-2 overflow-y-auto px-4 py-3 sm:px-5">
-            {loading ? (
-              <div className="flex items-center justify-center py-10">
-                <Loader2 className="size-5 animate-spin text-muted-foreground" />
-              </div>
-            ) : filtered.length === 0 ? (
+            {filtered.length === 0 ? (
               <p className="py-8 text-center text-sm text-muted-foreground">
-                Nenhum exercicio encontrado
+                {exercises.length === 0
+                  ? "Nenhum exercicio cadastrado na biblioteca"
+                  : "Nenhum exercicio encontrado"}
               </p>
             ) : (
               filtered.map(exercise => (

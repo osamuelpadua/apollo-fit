@@ -129,15 +129,13 @@ export async function uploadProgressPhoto(formData: FormData) {
 
   if (uploadError) return { error: uploadError.message }
 
-  const { data: urlData } = supabase.storage.from("progress").getPublicUrl(path)
-
   const { data, error } = await supabase
     .from("progress_photos")
     .insert({
       trainer_id: user.id,
       student_id: studentId,
       storage_path: path,
-      public_url: urlData.publicUrl,
+      public_url: null,
       angle: (angle as "front" | "back" | "left" | "right" | null) ?? null,
       taken_at: takenAt,
     })
