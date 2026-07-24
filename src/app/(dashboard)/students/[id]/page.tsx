@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { PageHeader } from "@/components/shared/page-header"
 import { StudentActions } from "@/components/students/student-actions"
+import { StudentPortalAccess } from "@/components/students/student-portal-access"
 import { getStudentById } from "@/features/students/queries"
 import { getInitials, calculateAge, formatDate } from "@/lib/utils"
 
@@ -44,7 +45,7 @@ export default async function StudentDetailPage({ params }: Props) {
           : null
 
   return (
-    <div className="space-y-6">
+    <div className="app-page space-y-5">
       <PageHeader title={student.full_name} description="Perfil do aluno">
         <div className="flex items-center gap-2">
           <Button render={<Link href="/students" />} variant="ghost" size="sm">
@@ -120,6 +121,12 @@ export default async function StudentDetailPage({ params }: Props) {
           </div>
         </div>
       </div>
+
+      <StudentPortalAccess
+        studentId={student.id}
+        email={student.email}
+        hasAccess={Boolean(student.portal_user_id)}
+      />
 
       {/* Notes */}
       {student.notes && (
