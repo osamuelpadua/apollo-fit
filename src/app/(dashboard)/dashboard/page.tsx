@@ -12,7 +12,7 @@ import {
 import { StatsCard } from "@/components/dashboard/stats-card"
 import { RecentStudentsList } from "@/components/dashboard/recent-students-list"
 import { Button } from "@/components/ui/button"
-import { getProfile } from "@/features/auth/actions"
+import { getProfile } from "@/features/auth/queries"
 import { getDashboardStats, getRecentStudents } from "@/features/students/queries"
 import { InstallCard } from "@/components/pwa/install-card"
 

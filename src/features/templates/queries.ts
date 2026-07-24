@@ -1,5 +1,6 @@
-"use server"
+import "server-only"
 
+import { cache } from "react"
 import { createClient } from "@/lib/supabase/server"
 
 export type TemplateExerciseRow = {
@@ -65,7 +66,7 @@ export async function getTemplates(): Promise<TemplateListItem[]> {
   return (data ?? []) as TemplateListItem[]
 }
 
-export async function getTemplateById(id: string): Promise<TemplateDetail> {
+export const getTemplateById = cache(async (id: string): Promise<TemplateDetail> => {
   const supabase = await createClient()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (supabase as any)
@@ -93,4 +94,4 @@ export async function getTemplateById(id: string): Promise<TemplateDetail> {
   })
 
   return template
-}
+})

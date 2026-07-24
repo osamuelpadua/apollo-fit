@@ -1,8 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 import {
   ClipboardList,
   Dumbbell,
@@ -22,14 +22,7 @@ const NAV_ITEMS = [
 
 export function BottomNav() {
   const pathname = usePathname()
-  const router = useRouter()
   const [pendingHref, setPendingHref] = useState<string | null>(null)
-
-  useEffect(() => {
-    NAV_ITEMS.forEach(({ href }) => {
-      void router.prefetch(href)
-    })
-  }, [router])
 
   const activePath =
     pendingHref && pathname !== pendingHref ? pendingHref : pathname
@@ -50,7 +43,6 @@ export function BottomNav() {
             <Link
               key={href}
               href={href}
-              prefetch
               onClick={() => setPendingHref(href)}
               className={cn(
                 "relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1.5 rounded-xl transition-colors duration-150",

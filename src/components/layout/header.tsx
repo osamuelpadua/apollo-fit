@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { UserMenu } from "./user-menu"
-import { getProfile } from "@/features/auth/actions"
+import { getProfile } from "@/features/auth/queries"
 import { BrandLogo } from "@/components/shared/brand-logo"
 
 export async function Header() {

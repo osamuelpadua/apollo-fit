@@ -30,12 +30,17 @@ function studentsHref(params: { q?: string; status?: string }) {
 export default async function StudentsPage({ searchParams }: Props) {
   const { q, status } = await searchParams
 
-  const students = await getStudents({
-    search: q,
-    active: status === "active" ? true : status === "inactive" ? false : undefined,
-  })
-
-  const totalAll = await getStudents()
+  const active =
+    status === "active" ? true : status === "inactive" ? false : undefined
+  const allStudentsPromise = getStudents()
+  const filteredStudentsPromise =
+    q || active !== undefined
+      ? getStudents({ search: q, active })
+      : allStudentsPromise
+  const [students, totalAll] = await Promise.all([
+    filteredStudentsPromise,
+    allStudentsPromise,
+  ])
   const totalActive = totalAll.filter(student => student.is_active).length
   const totalInactive = totalAll.filter(student => !student.is_active).length
 

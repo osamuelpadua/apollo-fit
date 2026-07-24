@@ -3,13 +3,13 @@ import { redirect } from "next/navigation"
 import { BrandLogo } from "@/components/shared/brand-logo"
 import { OfflineBanner } from "@/components/pwa/offline-banner"
 import { PortalBottomNav } from "@/components/portal/portal-bottom-nav"
-import { getProfile, getUser } from "@/features/auth/actions"
+import { getAuthClaims, getProfile } from "@/features/auth/queries"
 
 export default async function PortalLayout({ children }: { children: ReactNode }) {
-  const [profile, user] = await Promise.all([getProfile(), getUser()])
+  const [profile, claims] = await Promise.all([getProfile(), getAuthClaims()])
   if (!profile) redirect("/portal-login")
   if (profile.role !== "student") redirect("/dashboard")
-  if (user?.app_metadata?.must_change_password === true) {
+  if (claims?.app_metadata?.must_change_password === true) {
     redirect("/update-password?temporary=1")
   }
 

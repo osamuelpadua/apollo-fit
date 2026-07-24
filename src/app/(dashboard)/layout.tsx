@@ -3,7 +3,7 @@ import { Sidebar } from "@/components/layout/sidebar"
 import { Header } from "@/components/layout/header"
 import { BottomNav } from "@/components/layout/bottom-nav"
 import { OfflineBanner } from "@/components/pwa/offline-banner"
-import { getProfile } from "@/features/auth/actions"
+import { getProfile } from "@/features/auth/queries"
 import { redirect } from "next/navigation"
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {

@@ -8,8 +8,8 @@ import { ExerciseSearch } from "@/components/exercises/exercise-search"
 import { EmptyState } from "@/components/shared/empty-state"
 import { FilterChips } from "@/components/shared/filter-chips"
 import { PageHeader } from "@/components/shared/page-header"
+import { getAuthClaims } from "@/features/auth/queries"
 import { getExercises } from "@/features/exercises/queries"
-import { createClient } from "@/lib/supabase/server"
 import { MUSCLE_GROUP_LABELS, type MuscleGroup } from "@/types/database.types"
 
 export const metadata: Metadata = { title: "Exercícios" }
@@ -26,21 +26,26 @@ const MUSCLE_PILLS = Object.entries(MUSCLE_GROUP_LABELS) as [
 export default async function ExercisesPage({ searchParams }: Props) {
   const { q, muscle, source } = await searchParams
 
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  const exercises = await getExercises({
+  const exerciseOptions = {
     search: q,
     muscle_group: muscle as MuscleGroup | undefined,
     source:
       source === "global" ? "global" : source === "custom" ? "custom" : undefined,
-  })
+  } as const
+  const allExercisesPromise = getExercises()
+  const filteredExercisesPromise =
+    q || muscle || source
+      ? getExercises(exerciseOptions)
+      : allExercisesPromise
+  const [claims, exercises, allExercises] = await Promise.all([
+    getAuthClaims(),
+    filteredExercisesPromise,
+    allExercisesPromise,
+  ])
 
-  const totalAll = (await getExercises()).length
-  const totalGlobal = (await getExercises({ source: "global" })).length
-  const totalCustom = (await getExercises({ source: "custom" })).length
+  const totalAll = allExercises.length
+  const totalGlobal = allExercises.filter(exercise => exercise.is_global).length
+  const totalCustom = totalAll - totalGlobal
 
   const sourceTabs = [
     { label: "Todos", value: undefined, count: totalAll },
@@ -121,7 +126,7 @@ export default async function ExercisesPage({ searchParams }: Props) {
             <ExerciseCard
               key={exercise.id}
               exercise={exercise}
-              isOwn={!exercise.is_global && exercise.trainer_id === user?.id}
+              isOwn={!exercise.is_global && exercise.trainer_id === claims?.sub}
             />
           ))}
         </div>

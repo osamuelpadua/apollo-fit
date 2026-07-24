@@ -32,17 +32,18 @@ export async function getProgressPhotos(studentId: string): Promise<ProgressPhot
   if (error) throw error
 
   const photos = data ?? []
+  if (photos.length === 0) return []
 
-  return Promise.all(
-    photos.map(async photo => {
-      const { data: signed } = await supabase.storage
-        .from("progress")
-        .createSignedUrl(photo.storage_path, 3600)
+  const { data: signedUrls } = await supabase.storage
+    .from("progress")
+    .createSignedUrls(
+      photos.map(photo => photo.storage_path),
+      3600
+    )
 
-      return {
-        ...photo,
-        display_url: signed?.signedUrl ?? photo.public_url ?? null,
-      }
-    })
-  )
+  return photos.map((photo, index) => ({
+    ...photo,
+    display_url:
+      signedUrls?.[index]?.signedUrl ?? photo.public_url ?? null,
+  }))
 }

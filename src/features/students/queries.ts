@@ -1,5 +1,6 @@
-"use server"
+import "server-only"
 
+import { cache } from "react"
 import { createClient } from "@/lib/supabase/server"
 
 export async function getStudents(options?: {
@@ -28,7 +29,7 @@ export async function getStudents(options?: {
   return data ?? []
 }
 
-export async function getStudentById(id: string) {
+export const getStudentById = cache(async (id: string) => {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from("students")
@@ -37,7 +38,7 @@ export async function getStudentById(id: string) {
     .single()
   if (error) throw error
   return data
-}
+})
 
 export async function getDashboardStats() {
   const supabase = await createClient()

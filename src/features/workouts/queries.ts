@@ -1,5 +1,6 @@
-"use server"
+import "server-only"
 
+import { cache } from "react"
 import { createClient } from "@/lib/supabase/server"
 import type { WorkoutStatus } from "@/types/database.types"
 
@@ -87,7 +88,7 @@ export async function getWorkouts(options?: {
   return (data ?? []) as WorkoutListItem[]
 }
 
-export async function getWorkoutById(id: string): Promise<WorkoutDetail> {
+export const getWorkoutById = cache(async (id: string): Promise<WorkoutDetail> => {
   const supabase = await createClient()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (supabase as any)
@@ -117,4 +118,4 @@ export async function getWorkoutById(id: string): Promise<WorkoutDetail> {
   })
 
   return workout
-}
+})

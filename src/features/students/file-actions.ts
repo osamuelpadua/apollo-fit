@@ -40,30 +40,19 @@ export async function getStudentFiles(studentId: string): Promise<StudentFile[]>
     created_at: string
   }>
 
-  const urls = await Promise.all(
-    files.map(async (file) => {
-      const [{ data: viewData }, { data: downloadData }] = await Promise.all([
-        supabase.storage
-          .from("student-files")
-          .createSignedUrl(file.storage_path, 60 * 60),
-        supabase.storage
-          .from("student-files")
-          .createSignedUrl(file.storage_path, 60 * 60, {
-            download: file.file_name,
-          }),
-      ])
+  if (files.length === 0) return []
 
-      return {
-        file_url: viewData?.signedUrl ?? null,
-        download_url: downloadData?.signedUrl ?? viewData?.signedUrl ?? null,
-      }
-    })
-  )
+  const { data: signedUrls } = await supabase.storage
+    .from("student-files")
+    .createSignedUrls(
+      files.map(file => file.storage_path),
+      60 * 60
+    )
 
   return files.map((file, index) => ({
     ...file,
-    file_url: urls[index]?.file_url ?? null,
-    download_url: urls[index]?.download_url ?? null,
+    file_url: signedUrls?.[index]?.signedUrl ?? null,
+    download_url: signedUrls?.[index]?.signedUrl ?? null,
   }))
 }
 

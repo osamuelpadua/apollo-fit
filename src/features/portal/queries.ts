@@ -1,24 +1,27 @@
-"use server"
+import "server-only"
 
+import { cache } from "react"
+import { getAuthClaims } from "@/features/auth/queries"
 import { createClient } from "@/lib/supabase/server"
 import { getAssessments, getProgressPhotos } from "@/features/assessments/queries"
 import { getStudentFiles } from "@/features/students/file-actions"
 import { getWorkoutById } from "@/features/workouts/queries"
 
-export async function getPortalStudent() {
+export const getPortalStudent = cache(async () => {
+  const claims = await getAuthClaims()
+  if (!claims?.sub) return null
+
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return null
 
   const { data, error } = await supabase
     .from("students")
     .select("*")
-    .eq("portal_user_id", user.id)
+    .eq("portal_user_id", claims.sub)
     .single()
 
   if (error) return null
   return data
-}
+})
 
 export async function getPortalCurrentWorkout() {
   const student = await getPortalStudent()
