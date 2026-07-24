@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
@@ -11,6 +10,7 @@ import {
   Users,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useNavigationFeedback } from "./navigation-feedback"
 
 const NAV_ITEMS = [
   { label: "Início", href: "/dashboard", icon: LayoutDashboard },
@@ -22,7 +22,7 @@ const NAV_ITEMS = [
 
 export function BottomNav() {
   const pathname = usePathname()
-  const [pendingHref, setPendingHref] = useState<string | null>(null)
+  const { pendingHref, startNavigation } = useNavigationFeedback()
 
   const activePath =
     pendingHref && pathname !== pendingHref ? pendingHref : pathname
@@ -43,7 +43,8 @@ export function BottomNav() {
             <Link
               key={href}
               href={href}
-              onClick={() => setPendingHref(href)}
+              onClick={() => startNavigation(href)}
+              aria-current={active ? "page" : undefined}
               className={cn(
                 "relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1.5 rounded-xl transition-colors duration-150",
                 active ? "text-primary" : "text-muted-foreground"

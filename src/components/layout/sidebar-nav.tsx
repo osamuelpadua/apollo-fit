@@ -10,6 +10,7 @@ import {
   LayoutTemplate,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useNavigationFeedback } from "./navigation-feedback"
 
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -25,19 +26,24 @@ interface SidebarNavProps {
 
 export function SidebarNav({ collapsed }: SidebarNavProps) {
   const pathname = usePathname()
+  const { pendingHref, startNavigation } = useNavigationFeedback()
+  const activePath =
+    pendingHref && pathname !== pendingHref ? pendingHref : pathname
 
   return (
     <nav className="flex flex-col gap-1 px-2">
       {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
         const active =
           href === "/dashboard"
-            ? pathname === "/dashboard"
-            : pathname.startsWith(href)
+            ? activePath === "/dashboard"
+            : activePath.startsWith(href)
 
         return (
           <Link
             key={href}
             href={href}
+            onClick={() => startNavigation(href)}
+            aria-current={active ? "page" : undefined}
             title={collapsed ? label : undefined}
             className={cn(
               "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150",

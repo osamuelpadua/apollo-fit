@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Activity, Dumbbell, FileText, Home, UserRound } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useNavigationFeedback } from "@/components/layout/navigation-feedback"
 
 const items = [
   { href: "/portal", label: "Início", icon: Home, exact: true },
@@ -15,6 +16,9 @@ const items = [
 
 export function PortalBottomNav() {
   const pathname = usePathname()
+  const { pendingHref, startNavigation } = useNavigationFeedback()
+  const activePath =
+    pendingHref && pathname !== pendingHref ? pendingHref : pathname
 
   return (
     <nav
@@ -24,11 +28,14 @@ export function PortalBottomNav() {
     >
       <div className="mx-auto flex h-[72px] max-w-2xl">
         {items.map(({ href, label, icon: Icon, exact }) => {
-          const active = exact ? pathname === href : pathname.startsWith(href)
+          const active = exact
+            ? activePath === href
+            : activePath.startsWith(href)
           return (
             <Link
               key={href}
               href={href}
+              onClick={() => startNavigation(href)}
               aria-current={active ? "page" : undefined}
               className={cn(
                 "relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1.5 rounded-xl",
