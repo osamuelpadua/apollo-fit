@@ -5,11 +5,12 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import Link from "next/link"
-import { Eye, EyeOff, Loader2 } from "lucide-react"
+import { CircleAlert, Eye, EyeOff, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
   Card,
   CardContent,
@@ -27,7 +28,13 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>
 
-export function LoginForm({ portal = false }: { portal?: boolean }) {
+export function LoginForm({
+  portal = false,
+  initialError,
+}: {
+  portal?: boolean
+  initialError?: string
+}) {
   const [showPassword, setShowPassword] = useState(false)
   const [isPending, startTransition] = useTransition()
 
@@ -58,6 +65,12 @@ export function LoginForm({ portal = false }: { portal?: boolean }) {
 
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <CardContent className="space-y-4">
+          {initialError && (
+            <Alert variant="destructive">
+              <CircleAlert className="size-4" />
+              <AlertDescription>{initialError}</AlertDescription>
+            </Alert>
+          )}
           <div className="space-y-2">
             <Label htmlFor="email">E-mail</Label>
             <Input
@@ -131,6 +144,12 @@ export function LoginForm({ portal = false }: { portal?: boolean }) {
               "Entrar"
             )}
           </Button>
+          <Link
+            href={portal ? "/login" : "/portal-login"}
+            className="flex min-h-11 items-center justify-center text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+          >
+            {portal ? "Sou personal trainer" : "Acessar como aluno"}
+          </Link>
         </CardFooter>
       </form>
     </Card>

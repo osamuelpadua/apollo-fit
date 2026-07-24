@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useTransition } from "react"
+import { useMemo, useState, useTransition } from "react"
+import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -17,7 +18,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { updatePassword } from "@/features/auth/actions"
+import { getSupabaseBrowserClient } from "@/lib/supabase/client"
 
 const schema = z
   .object({
@@ -36,6 +37,8 @@ const schema = z
 type FormData = z.infer<typeof schema>
 
 export function UpdatePasswordForm() {
+  const router = useRouter()
+  const supabase = useMemo(() => getSupabaseBrowserClient(), [])
   const [showPwd, setShowPwd] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [isPending, startTransition] = useTransition()
@@ -47,10 +50,40 @@ export function UpdatePasswordForm() {
 
   function onSubmit(data: FormData) {
     startTransition(async () => {
-      const result = await updatePassword(data.password)
-      if (result?.error) {
-        toast.error("Erro ao atualizar senha", { description: result.error })
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+
+      if (!session) {
+        toast.error("Convite inválido ou expirado", {
+          description: "Solicite um novo convite ao seu personal.",
+        })
+        return
       }
+
+      const { error } = await supabase.auth.updateUser({
+        password: data.password,
+      })
+
+      if (error) {
+        toast.error("Erro ao atualizar senha", { description: error.message })
+        return
+      }
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      const { data: profile } = user
+        ? await supabase
+            .from("profiles")
+            .select("role")
+            .eq("id", user.id)
+            .single()
+        : { data: null }
+
+      toast.success("Senha criada com sucesso")
+      router.replace(profile?.role === "student" ? "/portal" : "/dashboard")
+      router.refresh()
     })
   }
 

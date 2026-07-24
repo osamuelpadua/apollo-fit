@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache"
 import { createClient } from "@/lib/supabase/server"
 import { getSupabaseAdminClient } from "@/lib/supabase/admin"
+import { getAppUrl } from "@/lib/app-url"
 
 async function getOwnedStudent(studentId: string) {
   const supabase = await createClient()
@@ -28,9 +29,7 @@ async function getOwnedStudent(studentId: string) {
 }
 
 function inviteRedirectUrl() {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL
-  if (!appUrl) throw new Error("NEXT_PUBLIC_APP_URL não configurada")
-  return `${appUrl.replace(/\/$/, "")}/api/auth/callback?next=/update-password`
+  return `${getAppUrl()}/update-password`
 }
 
 export async function inviteStudentToPortal(studentId: string) {
@@ -58,7 +57,7 @@ export async function inviteStudentToPortal(studentId: string) {
     })
     .eq("id", data.user.id)
 
-  const { error: linkError } = await owned.supabase
+  const { error: linkError } = await admin
     .from("students")
     .update({ portal_user_id: data.user.id })
     .eq("id", studentId)
@@ -94,14 +93,14 @@ export async function revokeStudentPortalAccess(studentId: string) {
   const portalUserId = owned.student.portal_user_id
   if (!portalUserId) return { error: "Este aluno não possui acesso ao portal." }
 
-  const { error: unlinkError } = await owned.supabase
+  const admin = getSupabaseAdminClient()
+  const { error: unlinkError } = await admin
     .from("students")
     .update({ portal_user_id: null })
     .eq("id", studentId)
     .eq("trainer_id", owned.student.trainer_id)
   if (unlinkError) return { error: unlinkError.message }
 
-  const admin = getSupabaseAdminClient()
   const { error: deleteError } = await admin.auth.admin.deleteUser(portalUserId)
   if (deleteError) {
     return { error: "O vínculo foi removido, mas a conta precisa ser excluída no Supabase." }

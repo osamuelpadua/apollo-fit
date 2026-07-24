@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nova senha — Apolo Fit</title>
+  </head>
+  <body style="margin:0;background:#0b0b0c;color:#f8f7f5;font-family:Arial,Helvetica,sans-serif">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#0b0b0c;padding:32px 16px">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;overflow:hidden;border:1px solid #2b2927;border-radius:24px;background:#151413">
+            <tr>
+              <td style="padding:32px 32px 18px">
+                <div style="font-size:13px;font-weight:800;letter-spacing:2px;color:#f07623">APOLO FIT</div>
+                <h1 style="margin:20px 0 12px;font-size:28px;line-height:1.2;color:#ffffff">
+                  Crie uma nova senha
+                </h1>
+                <p style="margin:0;color:#bbb6b0;font-size:16px;line-height:1.65">
+                  Recebemos uma solicitação para renovar o acesso da conta
+                  <strong style="color:#ffffff">{{ .Email }}</strong>.
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0 32px 28px">
+                <p style="margin:0 0 22px;color:#bbb6b0;font-size:15px;line-height:1.65">
+                  Toque no botão abaixo para escolher uma nova senha e continuar no Apolo Fit.
+                </p>
+                <a href="https://apolo-fit.vercel.app/auth/confirm?token_hash={{ .TokenHash }}&amp;type=recovery&amp;next=/update-password"
+                   style="display:block;border-radius:14px;background:#f07623;color:#17110d;text-align:center;text-decoration:none;font-size:16px;font-weight:800;padding:16px 20px">
+                  Criar nova senha
+                </a>
+                <p style="margin:18px 0 0;color:#847f79;font-size:12px;line-height:1.6;text-align:center">
+                  Se você não solicitou esta alteração, ignore este e-mail.
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td style="border-top:1px solid #2b2927;padding:20px 32px;color:#77716b;font-size:12px;line-height:1.5">
+                Mensagem automática de segurança do Apolo Fit.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

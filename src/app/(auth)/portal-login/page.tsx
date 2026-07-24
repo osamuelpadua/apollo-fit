@@ -3,6 +3,11 @@ import { LoginForm } from "@/components/auth/login-form"
 
 export const metadata: Metadata = { title: "Portal do aluno" }
 
-export default function PortalLoginPage() {
-  return <LoginForm portal />
+interface Props {
+  searchParams: Promise<{ error?: string }>
+}
+
+export default async function PortalLoginPage({ searchParams }: Props) {
+  const { error } = await searchParams
+  return <LoginForm portal initialError={error} />
 }
