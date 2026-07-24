@@ -5,6 +5,11 @@ export const metadata: Metadata = {
   title: "Nova Senha",
 }
 
-export default function UpdatePasswordPage() {
-  return <UpdatePasswordForm />
+interface Props {
+  searchParams: Promise<{ temporary?: string }>
+}
+
+export default async function UpdatePasswordPage({ searchParams }: Props) {
+  const { temporary } = await searchParams
+  return <UpdatePasswordForm temporary={temporary === "1"} />
 }

@@ -1,5 +1,6 @@
 "use server"
 
+import { randomBytes } from "node:crypto"
 import { revalidatePath } from "next/cache"
 import { createClient } from "@/lib/supabase/server"
 import { getSupabaseAdminClient } from "@/lib/supabase/admin"
@@ -48,6 +49,89 @@ async function getOwnedStudent(studentId: string) {
 
 function inviteRedirectUrl() {
   return `${getAppUrl()}/update-password`
+}
+
+function createTemporaryPassword() {
+  return `Af7-${randomBytes(9).toString("base64url")}`
+}
+
+function manualAccessError(error: { message: string; code?: string }) {
+  const details = `${error.code ?? ""} ${error.message}`.toLowerCase()
+
+  if (
+    details.includes("already been registered") ||
+    details.includes("already registered") ||
+    details.includes("user_already_exists")
+  ) {
+    return "Já existe uma conta com este e-mail. Revise o cadastro ou use a recuperação de senha."
+  }
+
+  return `Não foi possível criar o acesso: ${error.message}`
+}
+
+export async function createStudentPortalAccess(studentId: string) {
+  const owned = await getOwnedStudent(studentId)
+  if ("error" in owned) return { error: owned.error }
+  if (!owned.student.email) {
+    return { error: "Cadastre um e-mail para este aluno antes de criar o acesso." }
+  }
+  if (owned.student.portal_user_id) {
+    return { error: "Este aluno já possui acesso ao portal." }
+  }
+
+  const temporaryPassword = createTemporaryPassword()
+  const admin = getSupabaseAdminClient()
+  const { data, error } = await admin.auth.admin.createUser({
+    email: owned.student.email,
+    password: temporaryPassword,
+    email_confirm: true,
+    user_metadata: {
+      full_name: owned.student.full_name,
+    },
+    app_metadata: {
+      app_role: "student",
+      must_change_password: true,
+    },
+  })
+
+  if (error || !data.user) {
+    return {
+      error: error
+        ? manualAccessError(error)
+        : "Não foi possível criar a conta do aluno.",
+    }
+  }
+
+  const { error: profileError } = await admin
+    .from("profiles")
+    .update({
+      role: "student",
+      full_name: owned.student.full_name,
+      email: owned.student.email,
+    })
+    .eq("id", data.user.id)
+
+  const { error: linkError } = await admin
+    .from("students")
+    .update({ portal_user_id: data.user.id })
+    .eq("id", studentId)
+    .eq("trainer_id", owned.student.trainer_id)
+
+  if (profileError || linkError) {
+    await admin.auth.admin.deleteUser(data.user.id)
+    return { error: "A conta foi criada, mas não pôde ser vinculada ao aluno." }
+  }
+
+  revalidatePath(`/students/${studentId}`)
+  return {
+    success: true,
+    access: {
+      studentName: owned.student.full_name,
+      email: owned.student.email,
+      temporaryPassword,
+      loginUrl: `${getAppUrl()}/portal-login`,
+    },
+  }
 }
 
 export async function inviteStudentToPortal(studentId: string) {

@@ -1,7 +1,6 @@
 "use client"
 
-import { useMemo, useState, useTransition } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -18,7 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { getSupabaseBrowserClient } from "@/lib/supabase/client"
+import { updatePassword } from "@/features/auth/actions"
 
 const schema = z
   .object({
@@ -36,9 +35,7 @@ const schema = z
 
 type FormData = z.infer<typeof schema>
 
-export function UpdatePasswordForm() {
-  const router = useRouter()
-  const supabase = useMemo(() => getSupabaseBrowserClient(), [])
+export function UpdatePasswordForm({ temporary = false }: { temporary?: boolean }) {
   const [showPwd, setShowPwd] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [isPending, startTransition] = useTransition()
@@ -50,40 +47,10 @@ export function UpdatePasswordForm() {
 
   function onSubmit(data: FormData) {
     startTransition(async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
-
-      if (!session) {
-        toast.error("Convite inválido ou expirado", {
-          description: "Solicite um novo convite ao seu personal.",
-        })
-        return
+      const result = await updatePassword(data.password)
+      if (result?.error) {
+        toast.error("Erro ao atualizar senha", { description: result.error })
       }
-
-      const { error } = await supabase.auth.updateUser({
-        password: data.password,
-      })
-
-      if (error) {
-        toast.error("Erro ao atualizar senha", { description: error.message })
-        return
-      }
-
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      const { data: profile } = user
-        ? await supabase
-            .from("profiles")
-            .select("role")
-            .eq("id", user.id)
-            .single()
-        : { data: null }
-
-      toast.success("Senha criada com sucesso")
-      router.replace(profile?.role === "student" ? "/portal" : "/dashboard")
-      router.refresh()
     })
   }
 
@@ -92,7 +59,9 @@ export function UpdatePasswordForm() {
       <CardHeader className="space-y-1 pb-6">
         <CardTitle className="text-2xl font-bold">Nova senha</CardTitle>
         <CardDescription className="text-muted-foreground">
-          Escolha uma senha forte para sua conta
+          {temporary
+            ? "Troque a senha temporária antes de acessar o portal"
+            : "Escolha uma senha forte para sua conta"}
         </CardDescription>
       </CardHeader>
 
@@ -165,7 +134,7 @@ export function UpdatePasswordForm() {
                 Atualizando…
               </>
             ) : (
-              "Atualizar senha"
+              temporary ? "Criar minha senha" : "Atualizar senha"
             )}
           </Button>
         </CardFooter>

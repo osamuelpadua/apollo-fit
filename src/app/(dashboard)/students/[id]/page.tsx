@@ -124,7 +124,9 @@ export default async function StudentDetailPage({ params }: Props) {
 
       <StudentPortalAccess
         studentId={student.id}
+        studentName={student.full_name}
         email={student.email}
+        phone={student.phone}
         hasAccess={Boolean(student.portal_user_id)}
       />
 
