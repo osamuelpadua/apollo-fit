@@ -58,13 +58,13 @@
    ============================================================ */
 :root {
   /* Core backgrounds */
-  --background: oklch(0.06 0 0);          /* #0F0F10 */
+  --background: oklch(0.045 0.004 40);     /* #0B0B0D */
   --foreground: oklch(0.965 0 0);         /* #F5F5F5 */
 
   /* Cards / surfaces */
-  --card: oklch(0.095 0 0);               /* #171717 */
+  --card: oklch(0.095 0.006 45);           /* warmer premium surface */
   --card-foreground: oklch(0.965 0 0);
-  --popover: oklch(0.14 0 0);             /* #222222 */
+  --popover: oklch(0.135 0.008 45);
   --popover-foreground: oklch(0.965 0 0);
 
   /* Brand orange */
@@ -78,7 +78,7 @@
 
   /* Muted / subdued text */
   --muted: oklch(0.14 0 0);
-  --muted-foreground: oklch(0.65 0.006 264); /* #A1A1AA */
+  --muted-foreground: oklch(0.7 0.01 60);
 
   /* Accent (hover states, highlights) */
   --accent: oklch(0.165 0 0);             /* #2A2A2A */
@@ -88,8 +88,8 @@
   --destructive: oklch(0.577 0.245 27.325);
 
   /* Borders and inputs */
-  --border: oklch(0.165 0 0);             /* #2A2A2A */
-  --input: oklch(0.165 0 0);
+  --border: oklch(0.19 0.01 45);
+  --input: oklch(0.18 0.01 45);
   --ring: oklch(0.72 0.19 41);            /* orange ring */
 
   /* Chart palette */
@@ -99,7 +99,7 @@
   --chart-4: oklch(0.62 0.15 300);        /* purple */
   --chart-5: oklch(0.68 0.15 145);        /* green */
 
-  --radius: 0.625rem;
+  --radius: 0.75rem;
 
   /* Custom fitness tokens */
   --surface: oklch(0.095 0 0);            /* #171717 */
@@ -118,11 +118,11 @@
 
 /* Ensure .dark mirrors :root — app forces dark class on <html> */
 .dark {
-  --background: oklch(0.06 0 0);
+  --background: oklch(0.045 0.004 40);
   --foreground: oklch(0.965 0 0);
-  --card: oklch(0.095 0 0);
+  --card: oklch(0.095 0.006 45);
   --card-foreground: oklch(0.965 0 0);
-  --popover: oklch(0.14 0 0);
+  --popover: oklch(0.135 0.008 45);
   --popover-foreground: oklch(0.965 0 0);
   --primary: oklch(0.72 0.19 41);
   --primary-foreground: oklch(0.06 0 0);
@@ -130,12 +130,12 @@
   --secondary: oklch(0.14 0 0);
   --secondary-foreground: oklch(0.965 0 0);
   --muted: oklch(0.14 0 0);
-  --muted-foreground: oklch(0.65 0.006 264);
+  --muted-foreground: oklch(0.7 0.01 60);
   --accent: oklch(0.165 0 0);
   --accent-foreground: oklch(0.965 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.165 0 0);
-  --input: oklch(0.165 0 0);
+  --border: oklch(0.19 0.01 45);
+  --input: oklch(0.18 0.01 45);
   --ring: oklch(0.72 0.19 41);
   --chart-1: oklch(0.72 0.19 41);
   --chart-2: oklch(0.65 0.006 264);
@@ -159,12 +159,14 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply overflow-x-hidden bg-background text-foreground antialiased;
+    @apply min-h-dvh overflow-x-hidden bg-background text-foreground antialiased;
+    overscroll-behavior-y: none;
   }
   html {
     @apply overflow-x-hidden font-sans;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
+    background: var(--background);
   }
   /* Custom scrollbar */
   ::-webkit-scrollbar {
@@ -180,5 +182,44 @@
   }
   ::-webkit-scrollbar-thumb:hover {
     background: oklch(0.72 0.19 41);
+  }
+}
+
+@layer components {
+  .app-panel {
+    @apply rounded-2xl border border-border bg-card shadow-[0_1px_0_rgba(255,255,255,0.025),0_18px_60px_rgba(0,0,0,0.18)];
+  }
+
+  .app-section-title {
+    @apply text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground;
+  }
+
+  .app-page {
+    @apply mx-auto w-full max-w-7xl space-y-5 md:space-y-6;
+  }
+}
+
+@media (display-mode: standalone) {
+  body {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  input,
+  textarea,
+  [contenteditable="true"] {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

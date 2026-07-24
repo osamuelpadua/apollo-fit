@@ -6,8 +6,9 @@ import { EmptyState } from "@/components/shared/empty-state"
 import { PageHeader } from "@/components/shared/page-header"
 import { TemplateCard } from "@/components/templates/template-card"
 import { getTemplates, type TemplateListItem } from "@/features/templates/queries"
+import { MobileFab } from "@/components/shared/mobile-fab"
 
-export const metadata: Metadata = { title: "Templates" }
+export const metadata: Metadata = { title: "Modelos" }
 
 export default async function TemplatesPage() {
   let templates: TemplateListItem[] = []
@@ -18,32 +19,32 @@ export default async function TemplatesPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="app-page space-y-5">
       <PageHeader
-        title="Templates de Treino"
-        description={`${templates.length} template${templates.length !== 1 ? "s" : ""}`}
+        title="Modelos de treino"
+        description={`${templates.length} modelo${templates.length !== 1 ? "s" : ""}`}
       >
         <Button
           render={<Link href="/templates/new" />}
-          className="bg-primary font-semibold text-primary-foreground hover:bg-[var(--primary-hover)]"
+          className="hidden bg-primary font-semibold text-primary-foreground hover:bg-[var(--primary-hover)] md:inline-flex"
         >
           <Plus className="size-4" />
-          Novo Template
+          Novo modelo
         </Button>
       </PageHeader>
 
       {templates.length === 0 ? (
         <EmptyState
           icon={LayoutTemplate}
-          title="Nenhum template criado"
-          description="Crie templates reutilizaveis e aplique-os rapidamente a qualquer aluno."
+          title="Nenhum modelo criado"
+          description="Crie modelos reutilizáveis e aplique-os rapidamente a qualquer aluno."
         >
           <Button
             render={<Link href="/templates/new" />}
             className="bg-primary text-primary-foreground hover:bg-[var(--primary-hover)]"
           >
             <Plus className="size-4" />
-            Criar Primeiro Template
+            Criar primeiro modelo
           </Button>
         </EmptyState>
       ) : (
@@ -53,6 +54,7 @@ export default async function TemplatesPage() {
           ))}
         </div>
       )}
+      <MobileFab href="/templates/new" label="Novo modelo" />
     </div>
   )
 }

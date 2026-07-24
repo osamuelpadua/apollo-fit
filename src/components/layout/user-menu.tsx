@@ -1,7 +1,7 @@
 "use client"
 
 import { useTransition } from "react"
-import { LogOut } from "lucide-react"
+import { Download, LogOut } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -24,6 +24,7 @@ import {
 import { signOut } from "@/features/auth/actions"
 import { getInitials } from "@/lib/utils"
 import type { Profile } from "@/types"
+import { usePwa } from "@/providers/pwa-provider"
 
 interface UserMenuProps {
   profile: Profile
@@ -50,6 +51,7 @@ function UserMenuTrigger({ profile }: UserMenuProps) {
 
 export function UserMenu({ profile }: UserMenuProps) {
   const [isPending, startTransition] = useTransition()
+  const { canInstall, install } = usePwa()
 
   function handleSignOut() {
     startTransition(async () => {
@@ -72,6 +74,12 @@ export function UserMenu({ profile }: UserMenuProps) {
             <DrawerDescription>{profile.email}</DrawerDescription>
           </DrawerHeader>
           <DrawerFooter>
+            {canInstall && (
+              <Button variant="outline" onClick={() => void install()} className="justify-start">
+                <Download className="size-4" />
+                Instalar aplicativo
+              </Button>
+            )}
             <Button
               variant="destructive"
               onClick={handleSignOut}
@@ -98,6 +106,12 @@ export function UserMenu({ profile }: UserMenuProps) {
             {profile.email}
           </DropdownMenuLabel>
           <DropdownMenuSeparator className="bg-border" />
+          {canInstall && (
+            <DropdownMenuItem onClick={() => void install()} className="gap-2 cursor-pointer">
+              <Download className="size-4" />
+              Instalar aplicativo
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem
             onClick={handleSignOut}
             disabled={isPending}

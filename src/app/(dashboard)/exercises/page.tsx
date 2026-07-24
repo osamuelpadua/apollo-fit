@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { Suspense } from "react"
-import { Dumbbell } from "lucide-react"
+import { Dumbbell, Plus } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { ExerciseCard } from "@/components/exercises/exercise-card"
 import { ExerciseFormDialog } from "@/components/exercises/exercise-form-dialog"
 import { ExerciseSearch } from "@/components/exercises/exercise-search"
@@ -57,12 +58,14 @@ export default async function ExercisesPage({ searchParams }: Props) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="app-page space-y-5">
       <PageHeader
         title="Biblioteca de Exercícios"
         description={`${exercises.length} exercício${exercises.length !== 1 ? "s" : ""}`}
       >
-        <ExerciseFormDialog />
+        <div className="hidden md:block">
+          <ExerciseFormDialog />
+        </div>
       </PageHeader>
 
       <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
@@ -123,6 +126,17 @@ export default async function ExercisesPage({ searchParams }: Props) {
           ))}
         </div>
       )}
+      <ExerciseFormDialog
+        trigger={
+          <Button
+            aria-label="Novo exercício"
+            className="fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] right-4 z-40 min-h-14 rounded-full px-5 font-semibold shadow-[0_12px_40px_rgba(240,118,35,0.38)] md:hidden"
+          >
+            <Plus className="size-5" />
+            Novo
+          </Button>
+        }
+      />
     </div>
   )
 }

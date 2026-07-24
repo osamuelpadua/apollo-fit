@@ -27,7 +27,7 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>
 
-export function LoginForm() {
+export function LoginForm({ portal = false }: { portal?: boolean }) {
   const [showPassword, setShowPassword] = useState(false)
   const [isPending, startTransition] = useTransition()
 
@@ -50,7 +50,9 @@ export function LoginForm() {
       <CardHeader className="space-y-1 pb-6">
         <CardTitle className="text-2xl font-bold">Bem-vindo de volta</CardTitle>
         <CardDescription className="text-muted-foreground">
-          Entre com sua conta de personal trainer
+          {portal
+            ? "Consulte seu treino e acompanhe sua evolução"
+            : "Entre com sua conta de personal trainer"}
         </CardDescription>
       </CardHeader>
 

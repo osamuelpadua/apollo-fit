@@ -14,9 +14,9 @@ import { cn } from "@/lib/utils"
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Alunos", href: "/students", icon: Users },
-  { label: "Exercícios", href: "/exercises", icon: Dumbbell },
   { label: "Treinos", href: "/workouts", icon: ClipboardList },
-  { label: "Templates", href: "/templates", icon: LayoutTemplate },
+  { label: "Exercícios", href: "/exercises", icon: Dumbbell },
+  { label: "Modelos", href: "/templates", icon: LayoutTemplate },
 ]
 
 interface SidebarNavProps {

@@ -21,8 +21,8 @@ export function StatsCard({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-xl border border-border bg-card p-4 md:p-5 transition-colors",
-        variant === "primary" && "border-primary/20 bg-primary/5"
+        "app-panel relative overflow-hidden p-4 transition-all hover:border-border/80 md:p-5",
+        variant === "primary" && "border-primary/25 bg-primary/[0.07]"
       )}
     >
       {variant === "primary" && (
@@ -57,7 +57,7 @@ export function StatsCard({
 
         <div
           className={cn(
-            "flex size-9 md:size-10 shrink-0 items-center justify-center rounded-lg",
+          "flex size-10 shrink-0 items-center justify-center rounded-xl md:size-11",
             variant === "primary"
               ? "bg-primary text-primary-foreground"
               : "bg-accent text-muted-foreground"

@@ -17,7 +17,7 @@ const NAV_ITEMS = [
   { label: "Alunos", href: "/students", icon: Users },
   { label: "Treinos", href: "/workouts", icon: ClipboardList },
   { label: "Exercícios", href: "/exercises", icon: Dumbbell },
-  { label: "Templates", href: "/templates", icon: LayoutTemplate },
+  { label: "Modelos", href: "/templates", icon: LayoutTemplate },
 ]
 
 export function BottomNav() {
@@ -36,10 +36,10 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/90 backdrop-blur-xl md:hidden"
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-border/80 bg-background/92 shadow-[0_-16px_50px_rgba(0,0,0,0.28)] backdrop-blur-2xl md:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
-      <div className="flex h-[68px]">
+      <div className="flex h-[72px]">
         {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
           const active =
             href === "/dashboard"
@@ -53,20 +53,20 @@ export function BottomNav() {
               prefetch
               onClick={() => setPendingHref(href)}
               className={cn(
-                "relative flex flex-1 flex-col items-center justify-center gap-1 transition-colors duration-150",
+                "relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1.5 rounded-xl transition-colors duration-150",
                 active ? "text-primary" : "text-muted-foreground"
               )}
             >
               {active && (
-                <span className="absolute left-1/2 top-0 h-[2px] w-8 -translate-x-1/2 rounded-full bg-primary" />
+                <span className="absolute left-1/2 top-1 h-[3px] w-7 -translate-x-1/2 rounded-full bg-primary shadow-[0_0_14px_rgba(240,118,35,0.65)]" />
               )}
               <Icon
                 className={cn(
-                  "size-6 transition-transform duration-150",
-                  active && "scale-110"
+                  "size-[22px] transition-transform duration-150",
+                  active && "-translate-y-0.5 scale-105"
                 )}
               />
-              <span className="text-[11px] font-medium leading-none tracking-wide">
+              <span className="max-w-full truncate text-[10px] font-semibold leading-none tracking-wide">
                 {label}
               </span>
             </Link>

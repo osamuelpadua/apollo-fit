@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { EmptyState } from "@/components/shared/empty-state"
 import { FilterChips } from "@/components/shared/filter-chips"
 import { PageHeader } from "@/components/shared/page-header"
+import { MobileFab } from "@/components/shared/mobile-fab"
 import { getStudents } from "@/features/students/queries"
 import { getInitials } from "@/lib/utils"
 
@@ -39,14 +40,14 @@ export default async function StudentsPage({ searchParams }: Props) {
   const totalInactive = totalAll.filter(student => !student.is_active).length
 
   return (
-    <div className="space-y-6">
+    <div className="app-page space-y-5">
       <PageHeader
         title="Alunos"
         description={`${students.length} resultado${students.length !== 1 ? "s" : ""}`}
       >
         <Button
           render={<Link href="/students/new" />}
-          className="bg-primary font-semibold text-primary-foreground hover:bg-[var(--primary-hover)]"
+          className="hidden bg-primary font-semibold text-primary-foreground hover:bg-[var(--primary-hover)] md:inline-flex"
         >
           <UserPlus className="size-4" />
           Novo Aluno
@@ -104,12 +105,12 @@ export default async function StudentsPage({ searchParams }: Props) {
           )}
         </EmptyState>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="-mx-4 divide-y divide-border/70 border-y border-border/70 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:divide-y-0 sm:border-0 lg:grid-cols-3">
           {students.map(student => (
             <Link
               key={student.id}
               href={`/students/${student.id}`}
-              className="group flex min-h-[92px] items-center gap-3 rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/30 active:scale-[0.98] active:bg-primary/5"
+              className="group flex min-h-[92px] items-center gap-3 bg-card/70 p-4 transition-all hover:bg-primary/5 active:bg-primary/10 sm:rounded-2xl sm:border sm:border-border/70 sm:bg-card"
             >
               <Avatar className="size-12 shrink-0">
                 <AvatarImage
@@ -150,6 +151,7 @@ export default async function StudentsPage({ searchParams }: Props) {
           ))}
         </div>
       )}
+      <MobileFab href="/students/new" label="Novo aluno" />
     </div>
   )
 }

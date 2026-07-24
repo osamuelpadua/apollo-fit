@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/shared/page-header"
 import { EmptyState } from "@/components/shared/empty-state"
 import { WorkoutCard } from "@/components/workouts/workout-card"
 import { getWorkouts } from "@/features/workouts/queries"
+import { MobileFab } from "@/components/shared/mobile-fab"
 
 export const metadata: Metadata = { title: "Treinos" }
 
@@ -13,14 +14,14 @@ export default async function WorkoutsPage() {
   const workouts = await getWorkouts()
 
   return (
-    <div className="space-y-6">
+    <div className="app-page space-y-5">
       <PageHeader
         title="Treinos"
         description={`${workouts.length} treino${workouts.length !== 1 ? "s" : ""}`}
       >
         <Button
           render={<Link href="/workouts/new" />}
-          className="bg-primary hover:bg-[var(--primary-hover)] text-primary-foreground font-semibold"
+          className="hidden bg-primary hover:bg-[var(--primary-hover)] text-primary-foreground font-semibold md:inline-flex"
         >
           <Plus className="size-4" />
           Novo Treino
@@ -48,6 +49,7 @@ export default async function WorkoutsPage() {
           ))}
         </div>
       )}
+      <MobileFab href="/workouts/new" label="Novo treino" />
     </div>
   )
 }

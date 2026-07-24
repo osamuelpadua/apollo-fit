@@ -19,12 +19,12 @@ export function RecentStudentsList({ students }: RecentStudentsListProps) {
   }
 
   return (
-    <ul className="divide-y divide-border">
+    <ul className="divide-y divide-border/70">
       {students.map((student) => (
         <li key={student.id}>
           <Link
             href={`/students/${student.id}`}
-            className="flex items-center gap-3 py-3 px-1 rounded-lg hover:bg-accent/50 transition-colors group"
+            className="group -mx-1 flex min-h-16 items-center gap-3 rounded-xl px-2 py-3 transition-colors hover:bg-accent/50"
           >
             <Avatar className="size-9 shrink-0">
               <AvatarImage src={student.avatar_url ?? undefined} alt={student.full_name} />
@@ -56,7 +56,7 @@ export function RecentStudentsList({ students }: RecentStudentsListProps) {
               <span className="hidden sm:block text-xs text-muted-foreground whitespace-nowrap">
                 {formatRelative(student.created_at)}
               </span>
-              <ChevronRight className="size-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+              <ChevronRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
             </div>
           </Link>
         </li>
