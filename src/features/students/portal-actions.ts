@@ -5,6 +5,24 @@ import { createClient } from "@/lib/supabase/server"
 import { getSupabaseAdminClient } from "@/lib/supabase/admin"
 import { getAppUrl } from "@/lib/app-url"
 
+function authEmailError(error: { message: string; code?: string }) {
+  const details = `${error.code ?? ""} ${error.message}`.toLowerCase()
+
+  if (
+    details.includes("rate limit") ||
+    details.includes("rate_limit") ||
+    details.includes("too many requests")
+  ) {
+    return "Limite de envio de e-mails atingido. Com o provedor padrão do Supabase são permitidos apenas 2 e-mails por hora. Aguarde a renovação do limite ou configure um SMTP próprio."
+  }
+
+  if (details.includes("email address not authorized")) {
+    return "Este endereço não está autorizado pelo provedor de teste do Supabase. Configure um SMTP próprio para enviar convites aos alunos."
+  }
+
+  return `Não foi possível enviar o e-mail: ${error.message}`
+}
+
 async function getOwnedStudent(studentId: string) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -46,7 +64,14 @@ export async function inviteStudentToPortal(studentId: string) {
       data: { full_name: owned.student.full_name },
     }
   )
-  if (error || !data.user) return { error: error?.message ?? "Não foi possível enviar o convite." }
+  if (error || !data.user) {
+    if (data.user?.id) await admin.auth.admin.deleteUser(data.user.id)
+    return {
+      error: error
+        ? authEmailError(error)
+        : "Não foi possível criar o acesso do aluno.",
+    }
+  }
 
   const { error: profileError } = await admin
     .from("profiles")
@@ -83,7 +108,7 @@ export async function resendStudentPortalAccess(studentId: string) {
     owned.student.email,
     { redirectTo: inviteRedirectUrl() }
   )
-  if (error) return { error: error.message }
+  if (error) return { error: authEmailError(error) }
   return { success: true }
 }
 
