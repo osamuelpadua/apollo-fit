@@ -28,21 +28,46 @@ export async function createWorkout(formData: unknown) {
       description: nullify(d.description),
       goal: nullify(d.goal),
       status: d.status,
+      source_type: d.source_type,
     })
     .select()
     .single()
 
   if (error) return { error: error.message }
 
-  // Create first section "A" automatically
-  await supabase.from("workout_sections").insert({
-    workout_id: data.id,
-    label: "A",
-    sort_order: 0,
-  })
+  // Treino por imagem não usa seções — o conteúdo vem das imagens enviadas.
+  if (d.source_type === "builder") {
+    await supabase.from("workout_sections").insert({
+      workout_id: data.id,
+      label: "A",
+      sort_order: 0,
+    })
+  }
 
   revalidatePath("/workouts")
   return { data }
+}
+
+/**
+ * Alterna entre treino montado por exercícios e treino por imagem.
+ * Nada é apagado: seções e imagens continuam salvas caso o personal volte atrás.
+ */
+export async function setWorkoutSourceType(
+  id: string,
+  sourceType: "builder" | "image"
+) {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from("workouts")
+    .update({ source_type: sourceType, updated_at: new Date().toISOString() })
+    .eq("id", id)
+
+  if (error) return { error: error.message }
+
+  revalidatePath("/workouts")
+  revalidatePath(`/workouts/${id}`)
+  revalidatePath("/portal/workout")
+  return { success: true }
 }
 
 export async function updateWorkout(
@@ -71,8 +96,21 @@ export async function updateWorkout(
 
 export async function deleteWorkout(id: string) {
   const supabase = await createClient()
+
+  // As linhas somem por cascade, mas os arquivos no storage não — limpa antes.
+  const { data: images } = await supabase
+    .from("workout_images")
+    .select("storage_path")
+    .eq("workout_id", id)
+
   const { error } = await supabase.from("workouts").delete().eq("id", id)
   if (error) return { error: error.message }
+
+  const paths = (images ?? []).map(image => image.storage_path)
+  if (paths.length > 0) {
+    await supabase.storage.from("workout-images").remove(paths)
+  }
+
   revalidatePath("/workouts")
   return { success: true }
 }

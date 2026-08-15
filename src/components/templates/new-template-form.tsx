@@ -45,7 +45,7 @@ export function NewTemplateForm() {
         return
       }
 
-      toast.success("Template criado!")
+      toast.success("Modelo criado!")
       router.push(`/templates/${result.data!.id}`)
     })
   }
@@ -85,7 +85,7 @@ export function NewTemplateForm() {
         <Label htmlFor="tpl-desc">Descrição</Label>
         <Textarea
           id="tpl-desc"
-          placeholder="Descreva para qual perfil de aluno este template é indicado..."
+          placeholder="Descreva para qual perfil de aluno este modelo é indicado..."
           rows={3}
           {...register("description")}
         />
@@ -112,7 +112,7 @@ export function NewTemplateForm() {
               Criando...
             </>
           ) : (
-            "Criar Template"
+            "Criar modelo"
           )}
         </Button>
       </div>

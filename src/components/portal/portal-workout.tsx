@@ -1,7 +1,22 @@
-import { Clock3, Dumbbell, Repeat2, Weight } from "lucide-react"
+import { Clock3, Dumbbell, ImageOff, Repeat2, Weight } from "lucide-react"
+import { PortalWorkoutImages } from "@/components/portal/portal-workout-images"
+import { EmptyState } from "@/components/shared/empty-state"
 import type { WorkoutDetail } from "@/features/workouts/queries"
 
 export function PortalWorkout({ workout }: { workout: WorkoutDetail }) {
+  if (workout.source_type === "image") {
+    if (workout.workout_images.length === 0) {
+      return (
+        <EmptyState
+          icon={ImageOff}
+          title="Treino em preparação"
+          description="Seu personal ainda não enviou a ficha deste treino."
+        />
+      )
+    }
+    return <PortalWorkoutImages images={workout.workout_images} />
+  }
+
   return (
     <div className="space-y-4">
       {workout.workout_sections.map((section) => (

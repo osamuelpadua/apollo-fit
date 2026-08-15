@@ -51,7 +51,7 @@ function UserMenuTrigger({ profile }: UserMenuProps) {
 
 export function UserMenu({ profile }: UserMenuProps) {
   const [isPending, startTransition] = useTransition()
-  const { canInstall, install } = usePwa()
+  const { canInstall, isStandalone, install } = usePwa()
 
   function handleSignOut() {
     startTransition(async () => {
@@ -74,10 +74,15 @@ export function UserMenu({ profile }: UserMenuProps) {
             <DrawerDescription>{profile.email}</DrawerDescription>
           </DrawerHeader>
           <DrawerFooter>
-            {canInstall && (
-              <Button variant="outline" onClick={() => void install()} className="justify-start">
+            {!isStandalone && (
+              <Button
+                variant="outline"
+                onClick={() => void install()}
+                disabled={!canInstall}
+                className="justify-start"
+              >
                 <Download className="size-4" />
-                Instalar aplicativo
+                {canInstall ? "Instalar aplicativo" : "Instale pelo navegador"}
               </Button>
             )}
             <Button
@@ -106,10 +111,14 @@ export function UserMenu({ profile }: UserMenuProps) {
             {profile.email}
           </DropdownMenuLabel>
           <DropdownMenuSeparator className="bg-border" />
-          {canInstall && (
-            <DropdownMenuItem onClick={() => void install()} className="gap-2 cursor-pointer">
+          {!isStandalone && (
+            <DropdownMenuItem
+              onClick={() => void install()}
+              disabled={!canInstall}
+              className="gap-2 cursor-pointer"
+            >
               <Download className="size-4" />
-              Instalar aplicativo
+              {canInstall ? "Instalar aplicativo" : "Instale pelo navegador"}
             </DropdownMenuItem>
           )}
           <DropdownMenuItem

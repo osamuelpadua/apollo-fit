@@ -149,6 +149,7 @@ export interface Database {
           goal: string | null
           duration_weeks: number | null
           status: WorkoutStatus
+          source_type: WorkoutSourceType
           is_current: boolean
           created_at: string
           updated_at: string
@@ -163,6 +164,7 @@ export interface Database {
           goal?: string | null
           duration_weeks?: number | null
           status?: WorkoutStatus
+          source_type?: WorkoutSourceType
           is_current?: boolean
           created_at?: string
           updated_at?: string
@@ -173,8 +175,38 @@ export interface Database {
           goal?: string | null
           duration_weeks?: number | null
           status?: WorkoutStatus
+          source_type?: WorkoutSourceType
           is_current?: boolean
           updated_at?: string
+        }
+        Relationships: []
+      }
+      workout_images: {
+        Row: {
+          id: string
+          workout_id: string
+          trainer_id: string
+          storage_path: string
+          caption: string | null
+          sort_order: number
+          file_size: number | null
+          mime_type: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          workout_id: string
+          trainer_id: string
+          storage_path: string
+          caption?: string | null
+          sort_order?: number
+          file_size?: number | null
+          mime_type?: string | null
+          created_at?: string
+        }
+        Update: {
+          caption?: string | null
+          sort_order?: number
         }
         Relationships: []
       }
@@ -496,6 +528,7 @@ export type Exercise = Database["public"]["Tables"]["exercises"]["Row"]
 export type Workout = Database["public"]["Tables"]["workouts"]["Row"]
 export type WorkoutSection = Database["public"]["Tables"]["workout_sections"]["Row"]
 export type WorkoutExercise = Database["public"]["Tables"]["workout_exercises"]["Row"]
+export type WorkoutImage = Database["public"]["Tables"]["workout_images"]["Row"]
 export type WorkoutTemplate = Database["public"]["Tables"]["workout_templates"]["Row"]
 export type Assessment = Database["public"]["Tables"]["assessments"]["Row"]
 export type ProgressPhoto = Database["public"]["Tables"]["progress_photos"]["Row"]
@@ -537,6 +570,7 @@ export type Equipment =
   | "other"
 
 export type WorkoutStatus = "active" | "completed" | "archived"
+export type WorkoutSourceType = "builder" | "image"
 export type UserRole = "trainer" | "student"
 
 // Translated labels
@@ -581,4 +615,9 @@ export const WORKOUT_STATUS_LABELS: Record<WorkoutStatus, string> = {
   active: "Ativo",
   completed: "Concluído",
   archived: "Arquivado",
+}
+
+export const WORKOUT_SOURCE_TYPE_LABELS: Record<WorkoutSourceType, string> = {
+  builder: "Exercícios",
+  image: "Imagem",
 }

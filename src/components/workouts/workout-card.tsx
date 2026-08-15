@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Pencil, Trash2 } from "lucide-react"
+import { ImageIcon, Pencil, Trash2 } from "lucide-react"
 import { toast } from "sonner"
 import {
   AlertDialog,
@@ -83,17 +83,30 @@ export function WorkoutCard({ workout }: Props) {
           </span>
         </div>
 
-        {workout.workout_sections.length > 0 && (
+        {workout.source_type === "image" ? (
           <div className="flex flex-wrap gap-2">
-            {workout.workout_sections.map(section => (
-              <span
-                key={section.id}
-                className="inline-flex size-8 items-center justify-center rounded-lg border border-border bg-muted/40 text-sm font-bold text-muted-foreground md:size-6 md:text-[11px]"
-              >
-                {section.label}
-              </span>
-            ))}
+            <span className="inline-flex min-h-7 items-center gap-1.5 rounded-full border border-border bg-muted/40 px-2.5 text-xs font-semibold text-muted-foreground">
+              <ImageIcon className="size-3.5" />
+              {workout.workout_images.length === 0
+                ? "Sem imagem"
+                : `${workout.workout_images.length} ${
+                    workout.workout_images.length === 1 ? "imagem" : "imagens"
+                  }`}
+            </span>
           </div>
+        ) : (
+          workout.workout_sections.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {workout.workout_sections.map(section => (
+                <span
+                  key={section.id}
+                  className="inline-flex size-8 items-center justify-center rounded-lg border border-border bg-muted/40 text-sm font-bold text-muted-foreground md:size-6 md:text-[11px]"
+                >
+                  {section.label}
+                </span>
+              ))}
+            </div>
+          )
         )}
 
         <div className="mt-auto flex gap-2 border-t border-border/50 pt-3">
@@ -121,8 +134,9 @@ export function WorkoutCard({ workout }: Props) {
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir &quot;{workout.name}&quot;?</AlertDialogTitle>
             <AlertDialogDescription>
-              O treino e todas as suas seções e exercícios serão removidos
-              permanentemente.
+              {workout.source_type === "image"
+                ? "O treino e todas as imagens enviadas serão removidos permanentemente."
+                : "O treino e todas as suas seções e exercícios serão removidos permanentemente."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

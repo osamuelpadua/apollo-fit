@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useTransition } from "react"
-import Link from "next/link"
 import {
   closestCenter,
   DndContext,
@@ -12,14 +11,9 @@ import {
 } from "@dnd-kit/core"
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers"
 import { arrayMove } from "@dnd-kit/sortable"
-import { ArrowLeft, Plus } from "lucide-react"
+import { Plus } from "lucide-react"
 import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
-import {
-  addSection,
-  reorderWorkoutExercises,
-  updateWorkout,
-} from "@/features/workouts/actions"
+import { addSection, reorderWorkoutExercises } from "@/features/workouts/actions"
 import type { WorkoutDetail } from "@/features/workouts/queries"
 import type { Exercise } from "@/types/database.types"
 import { BuilderSection, type SectionState } from "./builder-section"
@@ -31,7 +25,6 @@ interface Props {
 }
 
 export function WorkoutBuilder({ workout, exercises }: Props) {
-  const [workoutName, setWorkoutName] = useState(workout.name)
   const [sections, setSections] = useState<SectionState[]>(() =>
     workout.workout_sections.map(section => ({
       id: section.id,
@@ -147,47 +140,8 @@ export function WorkoutBuilder({ workout, exercises }: Props) {
     )
   }
 
-  function handleNameBlur() {
-    const trimmed = workoutName.trim()
-    if (!trimmed || trimmed === workout.name) return
-
-    startTransition(async () => {
-      const result = await updateWorkout(workout.id, { name: trimmed })
-      if (result.error) toast.error("Erro ao salvar nome")
-    })
-  }
-
   return (
     <div className="space-y-5 overflow-x-hidden">
-      <div className="flex items-start gap-2 md:gap-3">
-        <Button
-          render={<Link href="/workouts" />}
-          variant="ghost"
-          size="icon"
-          className="shrink-0"
-        >
-          <ArrowLeft className="size-4" />
-        </Button>
-
-        <div className="min-w-0 flex-1">
-          <input
-            type="text"
-            value={workoutName}
-            onChange={event => setWorkoutName(event.target.value)}
-            onBlur={handleNameBlur}
-            className="w-full border-b border-transparent bg-transparent pb-0.5 text-xl font-bold text-foreground transition-colors placeholder:text-muted-foreground focus:outline-none focus:border-border/50 md:text-2xl"
-          />
-          {workout.students && (
-            <p className="mt-1 text-sm text-muted-foreground">
-              Aluno:{" "}
-              <span className="font-medium text-foreground">
-                {workout.students.full_name}
-              </span>
-            </p>
-          )}
-        </div>
-      </div>
-
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}

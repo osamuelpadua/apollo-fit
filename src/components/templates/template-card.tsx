@@ -33,9 +33,9 @@ export function TemplateCard({ template }: Props) {
     startTransition(async () => {
       const result = await deleteTemplate(template.id)
       if (result.error) {
-        toast.error("Erro ao excluir template")
+        toast.error("Erro ao excluir modelo")
       } else {
-        toast.success("Template excluído")
+        toast.success("Modelo excluído")
         setDeleteOpen(false)
         router.refresh()
       }
@@ -90,7 +90,7 @@ export function TemplateCard({ template }: Props) {
             render={<Link href={`/templates/${template.id}`} />}
             variant="outline"
             className="border-border px-3"
-            aria-label={`Editar template ${template.name}`}
+            aria-label={`Editar modelo ${template.name}`}
           >
             <Pencil className="size-4" />
             <span className="sr-only sm:not-sr-only">Editar</span>
@@ -99,7 +99,7 @@ export function TemplateCard({ template }: Props) {
             variant="destructive"
             onClick={() => setDeleteOpen(true)}
             className="px-3"
-            aria-label={`Excluir template ${template.name}`}
+            aria-label={`Excluir modelo ${template.name}`}
           >
             <Trash2 className="size-4" />
           </Button>
@@ -111,7 +111,7 @@ export function TemplateCard({ template }: Props) {
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir &quot;{template.name}&quot;?</AlertDialogTitle>
             <AlertDialogDescription>
-              O template e todas as suas seções serão removidos. Treinos já
+              O modelo e todas as suas seções serão removidos. Treinos já
               criados a partir dele não serão afetados.
             </AlertDialogDescription>
           </AlertDialogHeader>

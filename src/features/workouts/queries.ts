@@ -2,7 +2,9 @@ import "server-only"
 
 import { cache } from "react"
 import { createClient } from "@/lib/supabase/server"
-import type { WorkoutStatus } from "@/types/database.types"
+import type { WorkoutSourceType, WorkoutStatus } from "@/types/database.types"
+
+const SIGNED_URL_TTL = 60 * 60
 
 export type WorkoutExerciseRow = {
   id: string
@@ -35,6 +37,19 @@ export type WorkoutSectionRow = {
   workout_exercises: WorkoutExerciseRow[]
 }
 
+export type WorkoutImageRow = {
+  id: string
+  workout_id: string
+  storage_path: string
+  caption: string | null
+  sort_order: number
+  mime_type: string | null
+  file_size: number | null
+  created_at: string
+  /** URL assinada (1h). Null quando o storage não devolve a assinatura. */
+  display_url: string | null
+}
+
 export type WorkoutDetail = {
   id: string
   trainer_id: string
@@ -43,6 +58,7 @@ export type WorkoutDetail = {
   description: string | null
   goal: string | null
   status: WorkoutStatus
+  source_type: WorkoutSourceType
   is_current: boolean
   created_at: string
   updated_at: string
@@ -52,12 +68,14 @@ export type WorkoutDetail = {
     avatar_url: string | null
   } | null
   workout_sections: WorkoutSectionRow[]
+  workout_images: WorkoutImageRow[]
 }
 
 export type WorkoutListItem = {
   id: string
   name: string
   status: WorkoutStatus
+  source_type: WorkoutSourceType
   created_at: string
   students: {
     id: string
@@ -65,6 +83,7 @@ export type WorkoutListItem = {
     avatar_url: string | null
   } | null
   workout_sections: { id: string; label: string }[]
+  workout_images: { id: string }[]
 }
 
 export async function getWorkouts(options?: {
@@ -76,7 +95,7 @@ export async function getWorkouts(options?: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let query = (supabase as any)
     .from("workouts")
-    .select("id, name, status, created_at, students(id, full_name, avatar_url), workout_sections(id, label)")
+    .select("id, name, status, source_type, created_at, students(id, full_name, avatar_url), workout_sections(id, label), workout_images(id)")
     .order("created_at", { ascending: false })
 
   if (options?.student_id) query = query.eq("student_id", options.student_id)
@@ -94,7 +113,7 @@ export const getWorkoutById = cache(async (id: string): Promise<WorkoutDetail> =
   const { data, error } = await (supabase as any)
     .from("workouts")
     .select(`
-      id, trainer_id, student_id, name, description, goal, status,
+      id, trainer_id, student_id, name, description, goal, status, source_type,
       is_current, created_at, updated_at,
       students(id, full_name, avatar_url),
       workout_sections(
@@ -104,6 +123,10 @@ export const getWorkoutById = cache(async (id: string): Promise<WorkoutDetail> =
           rest_seconds, tempo, notes, is_superset,
           exercises(id, name, muscle_group, category, equipment, is_global)
         )
+      ),
+      workout_images(
+        id, workout_id, storage_path, caption, sort_order,
+        mime_type, file_size, created_at
       )
     `)
     .eq("id", id)
@@ -117,5 +140,31 @@ export const getWorkoutById = cache(async (id: string): Promise<WorkoutDetail> =
     s.workout_exercises.sort((a, b) => a.sort_order - b.sort_order)
   })
 
+  workout.workout_images = await withSignedUrls(
+    supabase,
+    (workout.workout_images ?? []).sort((a, b) => a.sort_order - b.sort_order)
+  )
+
   return workout
 })
+
+type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>
+
+async function withSignedUrls(
+  supabase: SupabaseServerClient,
+  images: WorkoutImageRow[]
+): Promise<WorkoutImageRow[]> {
+  if (images.length === 0) return []
+
+  const { data: signed } = await supabase.storage
+    .from("workout-images")
+    .createSignedUrls(
+      images.map(image => image.storage_path),
+      SIGNED_URL_TTL
+    )
+
+  return images.map((image, index) => ({
+    ...image,
+    display_url: signed?.[index]?.signedUrl ?? null,
+  }))
+}

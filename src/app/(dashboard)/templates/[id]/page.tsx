@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const template = await getTemplateById(id)
     return { title: template.name }
   } catch {
-    return { title: "Template" }
+    return { title: "Modelo" }
   }
 }
 

@@ -76,7 +76,7 @@ export function ApplyTemplateDialog({
     startTransition(async () => {
       const result = await applyTemplate(templateId, studentId, workoutName)
       if ("error" in result) {
-        toast.error("Erro ao aplicar template")
+        toast.error("Erro ao aplicar modelo")
         return
       }
 
@@ -91,7 +91,7 @@ export function ApplyTemplateDialog({
       <div onClick={() => setOpen(true)} className="contents">
         {trigger ?? (
           <Button className="bg-primary font-semibold text-primary-foreground hover:bg-[var(--primary-hover)]">
-            Aplicar Template
+            Aplicar modelo
           </Button>
         )}
       </div>
@@ -100,7 +100,7 @@ export function ApplyTemplateDialog({
         <DialogContent className="fixed inset-x-0 bottom-0 top-auto left-0 max-h-[90svh] w-full max-w-none translate-x-0 translate-y-0 overflow-hidden rounded-b-none rounded-t-2xl border-border bg-card p-0 sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-xl sm:p-4">
           <DialogHeader className="border-b border-border/60 px-4 pb-3 pt-4 sm:border-0 sm:p-0">
             <span className="mx-auto mb-1 h-1 w-10 rounded-full bg-muted-foreground/30 sm:hidden" />
-            <DialogTitle>Aplicar Template</DialogTitle>
+            <DialogTitle>Aplicar modelo</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4 px-4 pb-4 pt-3 sm:mt-1 sm:px-0 sm:pt-0">
